@@ -24,6 +24,9 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
+/**
+ * 这是测试
+ */
 public class MainActivity extends BaseActivity {
 
     @Override
