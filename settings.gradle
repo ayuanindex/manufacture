@@ -1,0 +1,2 @@
+include ':app', ':basic'
+rootProject.name='manufacture'
