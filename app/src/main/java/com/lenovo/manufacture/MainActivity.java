@@ -1,6 +1,5 @@
 package com.lenovo.manufacture;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
