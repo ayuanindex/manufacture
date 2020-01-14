@@ -8,7 +8,7 @@ import retrofit2.http.POST;
 
 public interface ApiService {
 
-    @POST("/Interface/index/getMaterial")
+    @POST("Interface/index/getMaterial")
     Observable<MaterialBean> getMaterial();
 
 }
