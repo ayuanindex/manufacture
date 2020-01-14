@@ -55,7 +55,7 @@ public class MainActivity extends BaseActivity {
         gv_menu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                // TODO: 2020-01-14 model跳转
             }
         });
     }
