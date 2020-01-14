@@ -10,9 +10,6 @@ import com.lenovo.basic.base.act.BaseActivity;
 import com.lenovo.basic.utils.Network;
 import com.lenovo.topic1.bean.UpdateLightSwitch;
 
-import java.net.HttpCookie;
-import java.util.HashMap;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
