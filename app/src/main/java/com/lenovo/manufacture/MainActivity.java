@@ -1,23 +1,14 @@
 package com.lenovo.manufacture;
 
-import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
-import android.widget.ListAdapter;
 import android.widget.TextView;
-
-import androidx.annotation.Nullable;
 
 import com.lenovo.basic.base.act.BaseActivity;
 import com.lenovo.basic.utils.Network;
 import com.lenovo.manufacture.Bean.MaterialBean;
 
-import org.reactivestreams.Subscription;
-
 import java.util.List;
 
-import io.reactivex.FlowableSubscriber;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;

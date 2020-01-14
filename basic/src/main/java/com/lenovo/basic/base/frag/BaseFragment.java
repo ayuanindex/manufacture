@@ -20,15 +20,19 @@ import com.lenovo.basic.base.act.BaseFragmentActivity;
  * 所有Fragment的基类，使用此Fragment必须依赖BaseFragmentActivity
  */
 public abstract class BaseFragment extends Fragment {
+    /**
+     * Log标记
+     */
+    public final String TAG = this.getClass().getSimpleName();
 
     public BaseFragmentActivity mActivity;
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mActivity = (BaseFragmentActivity) context;
     }
-
 
     @Nullable
     @Override
@@ -40,6 +44,20 @@ public abstract class BaseFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public final void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        init();
+    }
+
+    /**
+     * 给Fragment设置布局文件
+     *
+     * @return
+     */
+    protected abstract @LayoutRes
+    int getLayout();
+
     /**
      * 初始化布局
      *
@@ -49,40 +67,9 @@ public abstract class BaseFragment extends Fragment {
 
 
     /**
-     * 给Fragment设置布局文件
-     *
-     * @return
-     */
-    protected abstract
-    @LayoutRes
-    int getLayout();
-
-
-    /**
-     * Log标记
-     */
-    public final String TAG = this.getClass().getSimpleName();
-
-    @Override
-    public final void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        init();
-    }
-
-    /**
      * 初始化数据
      */
     protected abstract void init();
-
-    /**
-     * 返回按键触发时调用
-     *
-     * @return 返回True代表我已处理返回逻辑，Activity不用自己finish。
-     * 返回False代表我没有处理逻辑，Activity自己走自己的逻辑
-     */
-    public boolean onBackPressed() {
-        return false;
-    }
 
     /**
      * 打开一个Fragment,并将其添加到回退栈
@@ -121,6 +108,18 @@ public abstract class BaseFragment extends Fragment {
 
 
     /**
+     * 通过包名跳转到指定model下的Activity
+     *
+     * @param activity 要跳转的activity所在model的包名
+     * @param cls      目标Activity的包路径
+     * @param isFinish 是关闭当前Activity
+     * @return 返回跳转时产生的Intent
+     */
+    public Intent startActivity(String activity, String cls, boolean isFinish) {
+        return mActivity.startActivity(activity, cls, isFinish);
+    }
+
+    /**
      * 关闭当前页面
      *
      * @param activity 被关闭的页面
@@ -129,11 +128,20 @@ public abstract class BaseFragment extends Fragment {
         mActivity.closeActivity(activity);
     }
 
-
     /**
      * Fragment回退
      */
     public void popBackStack() {
         mActivity.popBackStack();
+    }
+
+    /**
+     * 返回按键触发时调用
+     *
+     * @return 返回True代表我已处理返回逻辑，Activity不用自己finish。
+     * 返回False代表我没有处理逻辑，Activity自己走自己的逻辑
+     */
+    public boolean onBackPressed() {
+        return false;
     }
 }
