@@ -1,2 +1,2 @@
-include ':app', ':basic', ':topic1'
+include ':app', ':basic', ':topic1', ':topic2'
 rootProject.name='manufacture'
