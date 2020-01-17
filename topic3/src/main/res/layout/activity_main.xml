@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_alignEnd="@id/iv_image"
             android:layout_alignBottom="@id/iv_image"
-            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_marginEnd="@dimen/dp_10"
             android:layout_marginBottom="@dimen/dp_5"
             android:background="#ffffff"
             android:gravity="center"
@@ -68,7 +68,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tv_environment"
+                android:id="@+id/tv_electricity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_2"
@@ -88,7 +88,7 @@
             android:layout_alignBottom="@id/iv_image"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/dp_50"
+            android:layout_marginStart="@dimen/dp_12"
             android:layout_toEndOf="@id/iv_image"
             android:background="#ffffff"
             android:orientation="vertical"
@@ -100,12 +100,23 @@
                 android:layout_height="0dp"
                 android:layout_weight="1.5"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="vertical">
+
+                <!--刻度表布局-->
+                <com.lenovo.topic3.customerSeekBar.RangeSeekBar
+                    android:id="@+id/rsb_ruler"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_30"
+                    android:scrollbarSize="@dimen/dp_59"
+                    app:line_color="#000000"
+                    app:text_color="#000000" />
 
                 <!--刻度表文字-->
                 <TextView
+                    android:id="@+id/tv_power_consumption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_20"
                     android:text="92kw/h "
                     android:textSize="@dimen/sp_12" />
             </LinearLayout>
@@ -127,6 +138,7 @@
                     android:textSize="@dimen/sp_10" />
 
                 <SeekBar
+                    android:id="@+id/sb_changeValue"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5"

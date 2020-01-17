@@ -147,7 +147,7 @@
                     android:id="@+id/iv_cold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/cold0001" />
+                    android:src="@drawable/cold0002" />
 
                 <ImageView
                     android:id="@+id/iv_hot"
