@@ -51,6 +51,8 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initEvent() {
+
+
         sb_changeValue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             /**
              * seekBar的值改变时执行
@@ -99,7 +101,11 @@ public class MainActivity extends BaseActivity {
                 .subscribe(new Consumer<UpdatePower>() {
                     @Override
                     public void accept(UpdatePower updatePower) throws Exception {
-                        Log.i(TAG, "哈哈：" + updatePower.getMessage());
+                        // 请求成功时将数据同步到控件上
+                        // 修改界面中相关控件的值
+                        tv_electricity.setText(updatePower.getData().getPower() + "kw/h");
+                        tv_power_consumption.setText(updatePower.getData().getPower() + "kw/h");
+                        rsb_ruler.setCurrentProgress(Integer.parseInt(updatePower.getData().getPower()));
                     }
                 }, new Consumer<Throwable>() {
                     @Override
