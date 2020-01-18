@@ -2,6 +2,7 @@ package com.lenovo.topic3;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -51,7 +52,13 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initEvent() {
-
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 关闭当前页面
+                MainActivity.this.closeActivity();
+            }
+        });
 
         sb_changeValue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             /**
@@ -71,8 +78,6 @@ public class MainActivity extends BaseActivity {
 
             /**
              * 当停止改变时执行
-             *
-             * @param seekBar
              */
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
@@ -99,6 +104,7 @@ public class MainActivity extends BaseActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<UpdatePower>() {
+                    @SuppressLint("SetTextI18n")
                     @Override
                     public void accept(UpdatePower updatePower) throws Exception {
                         // 请求成功时将数据同步到控件上

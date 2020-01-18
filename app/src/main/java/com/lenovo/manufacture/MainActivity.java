@@ -32,7 +32,6 @@ public class MainActivity extends BaseActivity {
 
 
     private GridView gv_menu;
-    private GridViewAdater gridViewAdater;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
@@ -62,7 +61,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initData() {
         // 给GridView设置数据适配器
-        gridViewAdater = new GridViewAdater();
+        GridViewAdater gridViewAdater = new GridViewAdater();
         gv_menu.setAdapter(gridViewAdater);
 
         ApiService apiService = Network.remote(ApiService.class);
@@ -92,7 +91,6 @@ public class MainActivity extends BaseActivity {
     }
 
     class GridViewAdater extends BaseAdapter {
-        private ImageView ivIcon;
         private TextView tvTitle;
 
         @Override
@@ -124,7 +122,7 @@ public class MainActivity extends BaseActivity {
         }
 
         private void initView(View view) {
-            ivIcon = (ImageView) view.findViewById(R.id.iv_icon);
+            ImageView ivIcon = (ImageView) view.findViewById(R.id.iv_icon);
             tvTitle = (TextView) view.findViewById(R.id.tv_title);
         }
     }
