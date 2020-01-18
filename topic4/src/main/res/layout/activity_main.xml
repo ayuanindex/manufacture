@@ -4,11 +4,132 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextView
+    <!--标题布局-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dp_5">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/icon_onback" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="供电自动控制"
+            android:textColor="#000000"
+            android:textSize="@dimen/sp_12" />
+    </RelativeLayout>
+
+    <!--#FC4148-->
+    <!--#7097FE-->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="HelloWorld"
-        android:textSize="@dimen/sp_10" />
+        android:background="#DADADA"
+        android:orientation="vertical"
+        android:padding="@dimen/dp_10">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/dp_100">
+
+                <TextView
+                    android:id="@+id/tv_consumption"
+                    android:layout_width="@dimen/dp_55"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerHorizontal="true"
+                    android:background="#FC4148"
+                    android:gravity="center"
+                    android:maxEms="4"
+                    android:maxLength="4"
+                    android:padding="@dimen/dp_2"
+                    android:text="1234"
+                    android:textSize="@dimen/sp_20" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/tv_consumption"
+                    android:layout_toRightOf="@id/tv_consumption"
+                    android:text="kw/h"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_consumption"
+                    android:layout_alignStart="@id/tv_consumption"
+                    android:layout_alignEnd="@id/tv_consumption"
+                    android:gravity="center"
+                    android:text="电力消耗"
+                    android:textSize="@dimen/sp_11"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_supply"
+                    android:layout_width="@dimen/dp_55"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerHorizontal="true"
+                    android:background="#7097FE"
+                    android:gravity="center"
+                    android:maxEms="4"
+                    android:maxLength="4"
+                    android:padding="@dimen/dp_2"
+                    android:text="1234"
+                    android:textSize="@dimen/sp_20" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/tv_supply"
+                    android:layout_toRightOf="@id/tv_supply"
+                    android:text="kw/h"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_supply"
+                    android:layout_alignStart="@id/tv_supply"
+                    android:layout_alignEnd="@id/tv_supply"
+                    android:gravity="center"
+                    android:text="电力供应"
+                    android:textSize="@dimen/sp_11"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barchart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="2dp" />
+    </LinearLayout>
 </LinearLayout>
