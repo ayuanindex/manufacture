@@ -25,15 +25,15 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity {
 
+    /**
+     * seekBar当前值
+     */
+    private int currentProgress;
     private ImageView iv_back;
     private TextView tv_electricity;
     private RangeSeekBar rsb_ruler;
     private TextView tv_power_consumption;
     private SeekBar sb_changeValue;
-    /**
-     * seekBar当前值
-     */
-    private int currentProgress;
     private ApiService remote;
     private ArrayList<Disposable> disposables;
 
@@ -128,9 +128,16 @@ public class MainActivity extends BaseActivity {
     private void getFactoryPowerConsumption() {
         Disposable subscribe = Observable.interval(0, 5, TimeUnit.SECONDS)
                 .doOnNext(new Consumer<Long>() {
+
+                    private Disposable subscribe;
+
                     @Override
                     public void accept(Long aLong) throws Exception {
-                        Disposable subscribe = remote.getFactoryEnvironment(1)
+                        if (subscribe != null && !subscribe.isDisposed()) {
+                            Log.i(TAG, "哈哈：" + aLong);
+                            subscribe.dispose();
+                        }
+                        subscribe = remote.getFactoryEnvironment(1)
                                 .subscribeOn(Schedulers.io())
                                 .map(new Function<FactoryEnvironment, FactoryEnvironment.DataBeanList>() {
                                     @Override
@@ -154,8 +161,6 @@ public class MainActivity extends BaseActivity {
                                         Log.i(TAG, "哈哈：" + throwable.getMessage());
                                     }
                                 });
-                        // 将订阅添加到订阅集合
-                        disposables.add(subscribe);
                     }
                 })
                 .subscribe(new Consumer<Long>() {
