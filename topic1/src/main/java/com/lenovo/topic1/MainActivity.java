@@ -47,7 +47,7 @@ public class MainActivity extends BaseActivity {
         btn_open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                lightControl(1, 1);
+                lightControl(1);
             }
         });
 
@@ -55,7 +55,7 @@ public class MainActivity extends BaseActivity {
         btn_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                lightControl(1, 0);
+                lightControl(0);
             }
         });
     }
@@ -68,15 +68,14 @@ public class MainActivity extends BaseActivity {
     /**
      * 开关工厂灯的网络请求方法
      *
-     * @param id          灯的ID
      * @param lightSwitch 0表示关闭,1表示开启
      */
-    private void lightControl(int id, int lightSwitch) {
+    private void lightControl(int lightSwitch) {
         if (subscribe != null && subscribe.isDisposed()) {
             subscribe.dispose();
         }
         ApiService remote = Network.remote(ApiService.class);
-        subscribe = remote.getUpdateLightSwitch(id, lightSwitch)
+        subscribe = remote.getUpdateLightSwitch(1, lightSwitch)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<UpdateLightSwitch>() {
