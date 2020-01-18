@@ -1,3 +1,4 @@
+include ':topic6'
 include ':topic5'
 include ':topic4'
 include ':app', ':basic', ':topic1', ':topic2', ':topic3'
