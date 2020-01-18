@@ -149,8 +149,11 @@ public class MainActivity extends BaseActivity {
                                 .subscribe(new Consumer<List<FactoryEnvironment.DataBeanList>>() {
                                     @Override
                                     public void accept(List<FactoryEnvironment.DataBeanList> dataBeanLists) throws Exception {
+                                        Log.i(TAG, "哈哈：" + dataBeanLists.toString());
+                                        // 将数据填充到控件上
                                         tvEnvironment.setText(dataBeanLists.get(0).getOutTemp());
                                         tvWorkshop.setText(dataBeanLists.get(0).getWorkshopTemp());
+                                        // 每次刷新同步空调状态
                                         acOnOff = dataBeanLists.get(0).getAcOnOff();
                                         replaceImage();
                                     }
