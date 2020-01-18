@@ -6,17 +6,13 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewPropertyAnimator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
-import com.github.mikephil.charting.animation.Easing;
-import com.github.mikephil.charting.animation.EasingFunction;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -26,8 +22,6 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.lenovo.basic.base.act.BaseActivity;
 import com.lenovo.basic.utils.Network;
 import com.lenovo.topic4.bean.FactoryEnvironment;
-
-import org.reactivestreams.FlowAdapters;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -102,6 +96,7 @@ public class MainActivity extends BaseActivity {
             public void onClick(View v) {
                 // 关闭当前界面
                 MainActivity.this.closeActivity();
+                Log.i(TAG, "onClick: 当前页面已关闭");
             }
         });
     }
@@ -204,11 +199,8 @@ public class MainActivity extends BaseActivity {
 
                     @Override
                     public void accept(Long aLong) throws Exception {
-                        Log.i(TAG, "哈哈");
                         // 取消上次执行的订阅
-                        if (subscribe != null && !subscribe.isDisposed()) {
-                            subscribe.dispose();
-                        }
+                        unsubscribe(subscribe);
                         subscribe = remote.getFactoryEnvironment(1)
                                 .subscribeOn(Schedulers.io())
                                 .map(new Function<FactoryEnvironment, FactoryEnvironment.DataBeanList>() {
@@ -244,7 +236,7 @@ public class MainActivity extends BaseActivity {
                                 }, new Consumer<Throwable>() {
                                     @Override
                                     public void accept(Throwable throwable) throws Exception {
-                                        Log.i(TAG, "哈哈：" + throwable.getMessage());
+                                        Log.i(TAG, "accept: 内层网络请求发生错误：" + throwable.getMessage());
                                     }
                                 });
                     }
@@ -257,7 +249,7 @@ public class MainActivity extends BaseActivity {
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        Log.i(TAG, "哈哈：" + throwable.getMessage());
+                        Log.i(TAG, "accept: 定时出现错误：" + throwable.getMessage());
                     }
                 });
     }
@@ -269,9 +261,9 @@ public class MainActivity extends BaseActivity {
      * @param subscribe 需要取消的订阅
      */
     private void unsubscribe(Disposable subscribe) {
-        if (subscribe != null && subscribe.isDisposed()) {
+        if (subscribe != null && !subscribe.isDisposed()) {
             subscribe.dispose();
-            Log.i(TAG, "unsubscribe: ");
+            Log.i(TAG, "unsubscribe: 已取消订阅" + subscribe);
         }
     }
 
