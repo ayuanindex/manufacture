@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.google.gson.Gson;
 import com.lenovo.basic.base.act.BaseActivity;
 import com.lenovo.basic.utils.Network;
 import com.lenovo.manufacture.Bean.MaterialBean;
