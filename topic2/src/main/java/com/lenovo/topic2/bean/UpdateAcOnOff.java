@@ -1,4 +1,4 @@
-package com.ayuan.topic2.bean;
+package com.lenovo.topic2.bean;
 
 public class UpdateAcOnOff {
 

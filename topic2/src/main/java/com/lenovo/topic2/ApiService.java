@@ -1,7 +1,7 @@
-package com.ayuan.topic2;
+package com.lenovo.topic2;
 
-import com.ayuan.topic2.bean.FactoryEnvironment;
-import com.ayuan.topic2.bean.UpdateAcOnOff;
+import com.lenovo.topic2.bean.FactoryEnvironment;
+import com.lenovo.topic2.bean.UpdateAcOnOff;
 
 import io.reactivex.Observable;
 import retrofit2.http.Field;

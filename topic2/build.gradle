@@ -6,7 +6,7 @@ android {
 
 
     defaultConfig {
-        applicationId "com.ayuan.topic2"
+        applicationId "com.lenovo.topic2"
         minSdkVersion 28
         targetSdkVersion 29
         versionCode 1

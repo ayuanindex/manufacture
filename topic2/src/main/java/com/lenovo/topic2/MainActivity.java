@@ -1,4 +1,4 @@
-package com.ayuan.topic2;
+package com.lenovo.topic2;
 
 import android.util.Log;
 import android.view.View;
@@ -7,10 +7,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ayuan.topic2.bean.FactoryEnvironment;
-import com.ayuan.topic2.bean.UpdateAcOnOff;
 import com.lenovo.basic.base.act.BaseActivity;
 import com.lenovo.basic.utils.Network;
+import com.lenovo.topic2.bean.FactoryEnvironment;
+import com.lenovo.topic2.bean.UpdateAcOnOff;
 
 import java.util.ArrayList;
 import java.util.List;
