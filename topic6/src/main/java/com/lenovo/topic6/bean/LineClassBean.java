@@ -1,8 +1,6 @@
 package com.lenovo.topic6.bean;
 
-import android.util.Log;
-
-import static android.content.ContentValues.TAG;
+import androidx.annotation.NonNull;
 
 /**
  * @ProjectName: manufacture
@@ -23,6 +21,10 @@ public class LineClassBean {
 
     public int getPosition() {
         return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     public boolean isMpvIsSelect() {
@@ -49,10 +51,6 @@ public class LineClassBean {
         this.suvIsSelect = suvIsSelect;
     }
 
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
     public void update(AllProductionLineBean.LineBean lineBean) {
         switch (lineBean.getProductionLineId()) {
             case 1:
@@ -67,6 +65,7 @@ public class LineClassBean {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "LineClassBean{" +

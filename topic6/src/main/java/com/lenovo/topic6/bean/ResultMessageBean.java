@@ -1,5 +1,7 @@
 package com.lenovo.topic6.bean;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 /**
@@ -45,6 +47,7 @@ public class ResultMessageBean {
         this.data = data;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "ResultMessageBean{" +

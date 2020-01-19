@@ -1,5 +1,7 @@
 package com.lenovo.topic6.bean;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 /**
@@ -120,6 +122,7 @@ public class AllProductionLineBean {
             this.isAI = isAI;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return "LineBean{" +
@@ -134,6 +137,7 @@ public class AllProductionLineBean {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "AllProductionLineBean{" +
