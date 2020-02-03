@@ -6,6 +6,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <!--标题栏-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,6 +30,7 @@
             android:textSize="@dimen/sp_12" />
     </RelativeLayout>
 
+    <!--主体-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -36,6 +38,7 @@
         android:orientation="horizontal"
         android:padding="@dimen/dp_10">
 
+        <!--左边的部分-->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -45,11 +48,13 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
+            <!--左边的图片-->
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/gongchang_01" />
 
+            <!--左边的按钮-->
             <Button
                 android:id="@+id/btn_open"
                 android:layout_width="wrap_content"
@@ -59,6 +64,7 @@
                 android:text="开启" />
         </LinearLayout>
 
+        <!--右半部分-->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -68,11 +74,13 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
+            <!--右边的图片-->
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/gongchang_02" />
 
+            <!--右边的按钮-->
             <Button
                 android:id="@+id/btn_close"
                 android:layout_width="wrap_content"
