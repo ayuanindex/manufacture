@@ -13,7 +13,7 @@ public interface ApiService {
      * @param lightSwitch 灯的状态
      * @return
      */
-    @POST("dataInterface/UserWorkEnvironmental/updateLightSwitch")
-    @FormUrlEncoded
+    @POST("dataInterface/UserWorkEnvironmental/updateLightSwitch")// 注解请求方式
+    @FormUrlEncoded // 注解表示请求体是一个Form表单
     Observable<UpdateLightSwitch> getUpdateLightSwitch(@Field("id") int id, @Field("lightSwitch") int lightSwitch);
 }
