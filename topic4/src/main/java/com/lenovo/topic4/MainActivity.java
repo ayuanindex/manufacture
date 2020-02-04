@@ -2,14 +2,10 @@ package com.lenovo.topic4;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
-import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.annotation.Nullable;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -37,7 +33,6 @@ import io.reactivex.schedulers.Schedulers;
  * @ProjectName: manufacture
  * @Package: com.lenovo.topic4
  * @ClassName: MainActivity
- * @Author: AYuan
  * @CreateDate: 2020/1/18 12:06
  */
 public class MainActivity extends BaseActivity {
@@ -71,16 +66,19 @@ public class MainActivity extends BaseActivity {
     private BarDataSet barDataSetRight;
     private BarData barData;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-    }
-
+    /**
+     * 获取布局文件
+     *
+     * @return 返回布局文件的ID
+     */
     @Override
     protected int getLayoutIdRes() {
         return R.layout.activity_main;
     }
 
+    /**
+     * 初始化控件
+     */
     @Override
     protected void initView() {
         barchart = (BarChart) findViewById(R.id.barchart);
@@ -89,6 +87,9 @@ public class MainActivity extends BaseActivity {
         tv_consumption = (TextView) findViewById(R.id.tv_consumption);
     }
 
+    /**
+     * 初始化监听
+     */
     @Override
     protected void initEvent() {
         iv_back.setOnClickListener(new View.OnClickListener() {
@@ -101,6 +102,9 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 初始化需要使用的类
+     */
     @Override
     protected void initData() {
         // 将ApiService实例化
@@ -122,6 +126,7 @@ public class MainActivity extends BaseActivity {
         yValsLeft = new ArrayList<>();
         yValsRight = new ArrayList<>();
 
+        // 初始化图表数据
         for (int i = 0; i < 24; i++) {
             yValsLeft.add(new BarEntry(i, 0));
             yValsRight.add(new BarEntry((float) (i + 0.3), 0));
@@ -143,6 +148,7 @@ public class MainActivity extends BaseActivity {
         xAxis.setDrawGridLines(false);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setLabelCount(16);
+        // 设置X轴的坐标格式
         xAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -150,6 +156,7 @@ public class MainActivity extends BaseActivity {
             }
         });
         YAxis axisLeft = barchart.getAxisLeft();
+        // 设置Y轴的坐标单位
         axisLeft.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -192,9 +199,15 @@ public class MainActivity extends BaseActivity {
      * 获取工厂环境数据的方法
      */
     private void getFactoryEnvironment() {
+        // 使用RxJava提供的定时方式来替代Timer
+        // @field1：周期开始时的延时；@field2：周期时间；@field3：计时单位
         subscribe = Observable.interval(0, 5, TimeUnit.SECONDS)
+                // 每个周期所执行的方法
                 .doOnNext(new Consumer<Long>() {
 
+                    /**
+                     * 获取工厂用电量的订阅
+                     */
                     private Disposable subscribe;
 
                     @Override
@@ -202,15 +215,20 @@ public class MainActivity extends BaseActivity {
                         // 取消上次执行的订阅
                         unsubscribe(subscribe);
                         subscribe = remote.getFactoryEnvironment(1)
+                                // 切换到子线程进行网络请求
                                 .subscribeOn(Schedulers.io())
+                                // 对数据进行转换
                                 .map(new Function<FactoryEnvironment, FactoryEnvironment.DataBeanList>() {
                                     @Override
                                     public FactoryEnvironment.DataBeanList apply(FactoryEnvironment factoryEnvironment) throws Exception {
+                                        // 提取出需要使用的数据共下面的方法使用
                                         return factoryEnvironment.getData().get(0);
                                     }
                                 })
+                                // 切换到主线程执行
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new Consumer<FactoryEnvironment.DataBeanList>() {
+                                // 订阅网络请求状态
+                                .subscribe(new Consumer<FactoryEnvironment.DataBeanList>() {// 请求成功
                                     @SuppressLint("SetTextI18n")
                                     @Override
                                     public void accept(FactoryEnvironment.DataBeanList dataBeanList) throws Exception {
@@ -233,7 +251,7 @@ public class MainActivity extends BaseActivity {
                                         // 刷新图表
                                         refreshBarChart();
                                     }
-                                }, new Consumer<Throwable>() {
+                                }, new Consumer<Throwable>() {// 请求失败
                                     @Override
                                     public void accept(Throwable throwable) throws Exception {
                                         Log.i(TAG, "accept: 内层网络请求发生错误：" + throwable.getMessage());
@@ -270,6 +288,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // 销毁定时器的订阅
         unsubscribe(subscribe);
     }
 }
