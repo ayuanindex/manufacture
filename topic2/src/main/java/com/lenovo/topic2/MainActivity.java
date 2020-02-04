@@ -36,11 +36,19 @@ public class MainActivity extends BaseActivity {
     private ArrayList<Disposable> disposables;
     private String acOnOff;
 
+    /**
+     * 获取布局
+     *
+     * @return 返回布局文件的ID
+     */
     @Override
     protected int getLayoutIdRes() {
         return R.layout.activity_main;
     }
 
+    /**
+     * 初始化界面控件
+     */
     @Override
     protected void initView() {
         ivBack = (ImageView) findViewById(R.id.iv_back);
@@ -53,6 +61,9 @@ public class MainActivity extends BaseActivity {
         ivbtnClose = (ImageButton) findViewById(R.id.ivbtn_close);
     }
 
+    /**
+     * 初始化监听
+     */
     @Override
     protected void initEvent() {
         ivBack.setOnClickListener(new View.OnClickListener() {
@@ -90,6 +101,9 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 初始化需要使用的类
+     */
     @Override
     protected void initData() {
         // 将Api接口实例化
@@ -105,19 +119,23 @@ public class MainActivity extends BaseActivity {
      */
     private void acControl() {
         Disposable subscribe = remote.getFactoryEnvironment(1, acOnOff)
+                // 切换到子线程进行网络请求
                 .subscribeOn(Schedulers.io())
+                // 切换到主线程对结果进行处理
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<UpdateAcOnOff>() {
+                // 订阅网络请求的成功和失败
+                .subscribe(new Consumer<UpdateAcOnOff>() {// 请求成功
                     @Override
                     public void accept(UpdateAcOnOff updateAcOnOff) throws Exception {
                         Log.i(TAG, "哈哈：" + updateAcOnOff.getMessage());
                     }
-                }, new Consumer<Throwable>() {
+                }, new Consumer<Throwable>() {// 请求失败
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         Log.i(TAG, "哈哈:出现错误" + throwable.getMessage());
                     }
                 });
+        // 将订阅添加到订阅集合
         disposables.add(subscribe);
     }
 
@@ -126,11 +144,21 @@ public class MainActivity extends BaseActivity {
      * 5秒刷新一次
      */
     private void factoryEnvironment() {
+        // 使用RxJava提供的方法急性周期循环
+        // @field1：延时X秒之后执行；@field2：表示循环周期的间隔时间；@field3：表示计时单位
         Disposable factory = Observable.interval(0, 5, TimeUnit.SECONDS)
+                // 周期循环所执行的方法
                 .doOnNext(new Consumer<Long>() {
 
+                    /**
+                     * 获取空调状态的订阅
+                     */
                     private Disposable subscribe;
 
+                    /**
+                     * @param aLong 循环次数
+                     * @throws Exception 抛出的异常
+                     */
                     @Override
                     public void accept(Long aLong) throws Exception {
                         // 把之前的取消订阅
@@ -138,15 +166,25 @@ public class MainActivity extends BaseActivity {
                             subscribe.dispose();
                         }
                         subscribe = remote.getFactoryEnvironment(1)
+                                // 切换到子线程进行网络请求
                                 .subscribeOn(Schedulers.io())
+                                // 对请求成功的数据进行变换
                                 .map(new Function<FactoryEnvironment, List<FactoryEnvironment.DataBeanList>>() {
+                                    /**
+                                     * 拿到JavaBean中的集合
+                                     * @param factoryEnvironment 请求成功后接收数据的javaBean
+                                     * @return 返回当前JavaBean中的数据集合
+                                     * @throws Exception 抛出异常
+                                     */
                                     @Override
                                     public List<FactoryEnvironment.DataBeanList> apply(FactoryEnvironment factoryEnvironment) throws Exception {
                                         return factoryEnvironment.getData();
                                     }
                                 })
+                                // 切换到主线程更新界面
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new Consumer<List<FactoryEnvironment.DataBeanList>>() {
+                                // 订阅网络请求的状态
+                                .subscribe(new Consumer<List<FactoryEnvironment.DataBeanList>>() {// 请求成功
                                     @Override
                                     public void accept(List<FactoryEnvironment.DataBeanList> dataBeanLists) throws Exception {
                                         Log.i(TAG, "哈哈：" + dataBeanLists.toString());
@@ -157,7 +195,7 @@ public class MainActivity extends BaseActivity {
                                         acOnOff = dataBeanLists.get(0).getAcOnOff();
                                         replaceImage();
                                     }
-                                }, new Consumer<Throwable>() {
+                                }, new Consumer<Throwable>() {// 请求失败
                                     @Override
                                     public void accept(Throwable throwable) throws Exception {
                                         Log.i(TAG, "连接出现错误");
@@ -171,11 +209,12 @@ public class MainActivity extends BaseActivity {
 
                     }
                 });
+        // 将订阅添加到订阅集合，界面销毁时一起取消订阅
         disposables.add(factory);
     }
 
     /**
-     * 切换状态图片
+     * 切换点击按钮之后遥控器上图标状态图片
      */
     private void replaceImage() {
         switch (acOnOff) {

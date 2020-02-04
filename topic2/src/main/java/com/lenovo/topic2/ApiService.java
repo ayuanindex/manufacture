@@ -18,7 +18,7 @@ public interface ApiService {
 
     /**
      * @param factoryId 工厂ID
-     * @param acOnOff   空调状态{0表示关闭、1表示冷风、2表示热风}
+     * @param acOnOff   空调状态{0表示关闭、1表示冷风、2表示热风}11
      */
     @POST("dataInterface/UserWorkEnvironmental/updateAcOnOff")
     @FormUrlEncoded
