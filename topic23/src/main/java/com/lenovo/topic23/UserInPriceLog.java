@@ -6,11 +6,6 @@ import java.util.List;
  * “查询全部学生金币收入日志”接口 请求的Json数据转化成实体类
  */
 public class UserInPriceLog {
-    /**
-     * status : 200
-     * message : SUCCESS
-     * data : [{"id":725,"userWorkId":1,"price":1000,"endPrice":15500,"time":"2019-12-18 14:55:00","type":5},{"id":724,"userWorkId":1,"price":4500,"endPrice":14500,"time":"2019-12-18 14:45:00","type":5},{"id":723,"userWorkId":1,"price":800,"endPrice":10000,"time":"2019-12-18 14:35:00","type":5},{"id":722,"userWorkId":1,"price":2000,"endPrice":9200,"time":"2019-12-18 14:30:00","type":5}]
-     */
 
     private int status;
     private String message;

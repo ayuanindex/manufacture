@@ -1,12 +1,11 @@
-package com.lenovo.topic23;
+package com.lenovo.topic22;
 
 import java.util.List;
 
 /**
- * "查询全部学生金币支出日志“ 接口请求数据json转换为实体类
+ * “查询全部学生金币收入日志”接口 请求的Json数据转化成实体类
  */
-public class UserOutPriceLog {
-
+public class UserPriceLog {
 
     private int status;
     private String message;
@@ -38,12 +37,12 @@ public class UserOutPriceLog {
 
     public static class DataBean {
         /**
-         * id : 729
+         * id : 725
          * userWorkId : 1
-         * price : 500
-         * endPrice : 10000
-         * time : 2019-12-18 16:30:00
-         * type : 2
+         * price : 1000
+         * endPrice : 15500
+         * time : 2019-12-18 14:55:00
+         * type : 5
          */
 
         private int id;
