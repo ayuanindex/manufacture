@@ -5,20 +5,24 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.LineData;
 import com.lenovo.basic.base.act.BaseActivity;
 import com.lenovo.basic.utils.Network;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity {
@@ -27,12 +31,14 @@ public class MainActivity extends BaseActivity {
     private TextView mTvStartDate;
     private TextView mTvEndDate;
     private Button mTvQuery;
-    private LineChart mBarChart;
+    private LineChart mLineChart;
     private ApiService apiService;
     //一天的毫秒数
     private static Long dayOfTimeMillin = 24 * 60 * 60 * 1000L;
+    //日期解析
     private SimpleDateFormat sdfParse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private SimpleDateFormat sdfParse2 = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat sdfParse3 = new SimpleDateFormat("MM-dd");
 
     @Override
     protected int getLayoutIdRes() {
@@ -46,7 +52,8 @@ public class MainActivity extends BaseActivity {
         mTvStartDate = (TextView) findViewById(R.id.tv_start_date);
         mTvEndDate = (TextView) findViewById(R.id.tv_end_date);
         mTvQuery = (Button) findViewById(R.id.tv_query);
-        mBarChart = (LineChart) findViewById(R.id.barChart);
+        mLineChart = (LineChart) findViewById(R.id.lineChart);
+
     }
 
     @Override
@@ -77,11 +84,20 @@ public class MainActivity extends BaseActivity {
     protected void initData() {
         //创建网络请求服务
         apiService = Network.remote(ApiService.class);
-        //创建图表数据集合
+        //初始化图表
+        initLineChart();
         //查询默认时间的收支
         String startDateStr = mTvStartDate.getText().toString();
         String endDateStr = mTvEndDate.getText().toString();
+        //进行支出收入的金额查询
         queryMoney(startDateStr, endDateStr);
+    }
+
+    //初始化折线图
+    private void initLineChart() {
+        XAxis xAxis = mLineChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        mLineChart.getDescription().setText("");
     }
 
 
@@ -89,7 +105,9 @@ public class MainActivity extends BaseActivity {
      * 过滤非当前日期区间的收支记录
      */
     private Observable<List<UserPriceLog.DataBean>> map(Observable<UserPriceLog> userPriceLogObservable, String startDate, String endDate) {
+        //开始时间
         long startTime = 0;
+        //结束时间
         long endTiem = 0;
         try {
             startTime = sdfParse2.parse(startDate).getTime();
@@ -99,6 +117,7 @@ public class MainActivity extends BaseActivity {
         }
         long finalStartTime = startTime;
         long finalEndTiem = endTiem;
+        //过滤掉非当前时间范围的数据
         return userPriceLogObservable.map(UserPriceLog::getData)
                 .map(dataBeans -> {
                     List<UserPriceLog.DataBean> data = new ArrayList<>();
@@ -117,42 +136,77 @@ public class MainActivity extends BaseActivity {
      * 查询收支的金额
      */
     private void queryMoney(String startDate, String endDate) {
-//        //收入支出数据整合
-//        Disposable disposable = Observable.merge(
-//                map(apiService.getUserOutPriceLog(), startDate, endDate)/*支出数据*/,
-//                map(apiService.getUserInPriceLog(), startDate, endDate)/*收入数据*/
-//        )
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(dataBeans -> {
-//                    //进行绘图
-//                    Log.e(TAG, "------------------dataBeans:" + dataBeans.size());
-//                }, throwable -> throwable.printStackTrace());
+        try {
+            if (sdfParse2.parse(startDate).getTime() >= sdfParse2.parse(endDate).getTime()) {
+                Toast.makeText(this, "结束时间必须大于开始时间", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        /*支出数据*/
+        Observable<List<UserPriceLog.DataBean>> observableOut = map(apiService.getUserOutPriceLog(), startDate, endDate);
+        /*收入数据*/
+        Observable<List<UserPriceLog.DataBean>> observableIn = map(apiService.getUserInPriceLog(), startDate, endDate);
+        //收入支出数据整合
+        Observable.zip(observableOut, observableIn,
+                (dataBeans, dataBeans2) -> {
+                    ArrayList<UserPriceLog.DataBean> datas = new ArrayList<>(dataBeans);
+                    datas.addAll(dataBeans2);
+                    return datas;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .compose(this.bindToLifecycle())
+                .subscribe(dataBeans -> {
+                    //计算总收入，总支出
+                    int outMoney = 0, inMoney = 0;
+                    for (int i = 0; i < dataBeans.size(); i++) {
+                        UserPriceLog.DataBean dataBean = dataBeans.get(i);
+                        if (dataBean.getType() == 5) {
+                            //只有5售出，是收入，其他的均是支出
+                            inMoney += dataBeans.get(i).getPrice();
+                        } else {
+                            outMoney += dataBeans.get(i).getPrice();
+                        }
+                    }
+                    //设置金额显示
+                    mTvOutMoney.setText(String.valueOf(outMoney));
+                    mTvInMoney.setText(String.valueOf(inMoney));
+                    Log.e(TAG, "------------------dataBeans:" + dataBeans.size());
+                    //进行绘图
+                    drawLineChart(dataBeans);
+                }, throwable -> throwable.printStackTrace());
+    }
 
-        apiService.getUserOutPriceLog().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<UserPriceLog>() {
-            @Override
-            public void accept(UserPriceLog userPriceLog) throws Exception {
-                Log.e(TAG, "-----------------------*:" + userPriceLog.getData().size());
-            }
-        }, new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-                throwable.printStackTrace();
-            }
-        });
-        apiService.getUserInPriceLog().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<UserPriceLog>() {
-            @Override
-            public void accept(UserPriceLog userPriceLog) throws Exception {
-                Log.e(TAG, "-----------------------*:" + userPriceLog.getData().size());
-            }
-        }, new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-                throwable.printStackTrace();
-            }
-        });
+
+    /**
+     * 绘制折线图
+     *
+     * @param dataBeans
+     */
+    private void drawLineChart(ArrayList<UserPriceLog.DataBean> dataBeans) throws ParseException {
+        //计算出两个日期间相差的天数
+        long endTime = sdfParse2.parse(mTvEndDate.getText().toString()).getTime();
+        long startTime = sdfParse2.parse(mTvStartDate.getText().toString()).getTime();
+        int day = (int) ((endTime - startTime) / (24 * 60 * 60 * 1000) + 1);
+        Log.e(TAG, "--------------------day:" + day);
+        //创建x轴数据
+        List<String> xValues = new ArrayList<>();
+        Date date = new Date(startTime);
+        for (int i = 0; i < day; i++) {
+            xValues.add(sdfParse3.format(date));
+        }
+
+
+        //设置x轴的数量
+        mLineChart.getXAxis().setLabelCount(xValues.size());
+
+        LineData lineData = new LineData();
+        mLineChart.setData(lineData);
+        mLineChart.invalidate();
+
+
     }
 
 }
