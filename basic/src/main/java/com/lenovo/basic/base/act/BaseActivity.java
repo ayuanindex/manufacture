@@ -12,13 +12,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.lenovo.basic.base.frag.BaseFragment;
+import com.trello.rxlifecycle3.components.RxActivity;
+import com.trello.rxlifecycle3.components.support.RxAppCompatActivity;
 
 import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 /**
  * 所有Activity的基类
  */
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends RxAppCompatActivity {
     /**
      * Log标记
      */
@@ -33,6 +39,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         initData();
         initEvent();
     }
+
+
+
 
     /**
      * 在setContentView之前，设置窗口等

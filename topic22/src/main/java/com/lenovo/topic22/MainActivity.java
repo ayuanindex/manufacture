@@ -83,7 +83,6 @@ public class MainActivity extends BaseActivity {
         mRbTime.setChecked(false);
         mRbEndPrice.setChecked(false);
         cb.setChecked(isChecked);
-        Log.e(TAG, "-------------------CheckBox:" + isChecked);
         if (mAdapter != null) {
             List<UserPriceLog.DataBean> dataBeans = mAdapter.getDataBeans();
             //进行排序
@@ -160,8 +159,7 @@ public class MainActivity extends BaseActivity {
                             data.add(dataBeans.get(i));
                     }
                     return data;
-                }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                });
     }
 
     /**
@@ -171,16 +169,22 @@ public class MainActivity extends BaseActivity {
      */
     private void queryMoney(String dateStr) {
         //收入支出数据整合
-        Disposable disposable = Observable.concat(
-                map(apiService.getUserOutPriceLog(), dateStr)/*支出数据*/,
-                map(apiService.getUserInPriceLog(), dateStr)/*收入数据*/
-        ).subscribe(dataBeans -> {
-            //给listview设置数据
-            mLv.setAdapter(mAdapter = new MyAdapter(dataBeans));
-            //进行默认排序
-            mRbPrice.setChecked(true);
-            sort(mRbPrice);
-        }, throwable -> Log.e(TAG, "----------------------throwable:" + throwable.getMessage()));
+        Observable.zip(map(apiService.getUserOutPriceLog(), dateStr)/*支出数据*/,
+                map(apiService.getUserInPriceLog(), dateStr)/*收入数据*/,
+                (dataBeans, dataBeans2) -> {
+                    dataBeans.addAll(dataBeans2);
+                    return dataBeans;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .compose(this.bindToLifecycle())//绑定生命周期
+                .subscribe(dataBeans -> {
+                    //给listview设置数据
+                    mLv.setAdapter(mAdapter = new MyAdapter(dataBeans));
+                    //进行默认排序
+                    mRbPrice.setChecked(true);
+                    sort(mRbPrice);
+                }, throwable -> Log.e(TAG, "----------------------throwable:" + throwable.getMessage()));
     }
 
 
