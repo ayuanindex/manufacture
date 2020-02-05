@@ -30,7 +30,6 @@ import io.reactivex.schedulers.Schedulers;
  * @ProjectName: manufacture
  * @Package: com.lenovo.topic6
  * @ClassName: MainActivity
- * @Author: AYuan
  * @CreateDate: 2020/1/18 18:34
  */
 public class MainActivity extends BaseActivity {
@@ -42,17 +41,26 @@ public class MainActivity extends BaseActivity {
     private ArrayList<Disposable> disposables;
     private ArrayList<LineClassBean> lineClassBeans;
 
+    /**
+     * @return 返回布局文件的ID
+     */
     @Override
     protected int getLayoutIdRes() {
         return R.layout.activity_main;
     }
 
+    /**
+     * 初始化布局控件
+     */
     @Override
     protected void initView() {
         iv_back = (ImageView) findViewById(R.id.iv_back);
         lv_production_line = (ListView) findViewById(R.id.lv_production_line);
     }
 
+    /**
+     * 初始化控件监听
+     */
     @Override
     protected void initEvent() {
         iv_back.setOnClickListener(new View.OnClickListener() {
@@ -65,6 +73,9 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 初始化需要用到的类
+     */
     @Override
     protected void initData() {
         // 实例化ApiService
@@ -95,15 +106,19 @@ public class MainActivity extends BaseActivity {
      */
     private void getAllProductionLine() {
         Disposable getAllLine = remote.getAllProductionLine()
+                // 切换到子线程进行网络请求
                 .subscribeOn(Schedulers.io())
+                // 将需要的数据集合提取出来
                 .map(new Function<AllProductionLineBean, List<AllProductionLineBean.LineBean>>() {
                     @Override
                     public List<AllProductionLineBean.LineBean> apply(AllProductionLineBean allProductionLineBean) throws Exception {
                         return allProductionLineBean.getData();
                     }
                 })
+                // 切换到主线程将获取到的数据填充到集合中年
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<AllProductionLineBean.LineBean>>() {
+                // 订阅网络请求状态
+                .subscribe(new Consumer<List<AllProductionLineBean.LineBean>>() {// 请求成功
                     @Override
                     public void accept(List<AllProductionLineBean.LineBean> lineBeans) throws Exception {
                         // 循环找到对应位置的对象设置显示或者隐藏
@@ -114,12 +129,13 @@ public class MainActivity extends BaseActivity {
                         // 刷新集合
                         customerAdapter.notifyDataSetChanged();
                     }
-                }, new Consumer<Throwable>() {
+                }, new Consumer<Throwable>() {// 请求失败
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         Log.i(TAG, "accept: 网络出现错误" + throwable.getMessage());
                     }
                 });
+        // 将订阅添加到订阅集合中
         disposables.add(getAllLine);
     }
 
@@ -128,9 +144,8 @@ public class MainActivity extends BaseActivity {
      *
      * @param lineClass 生产线类型
      * @param position  新的生产线的目标位置
-     * @param textView  需要改变状态的TextView
      */
-    private void createProductionLine(Integer lineClass, Integer position, TextView textView) {
+    private void createProductionLine(Integer lineClass, Integer position) {
         Log.i(TAG, "createProductionLine: " + lineClass + "位置：" + position);
         Disposable subscribe = remote.getResult(lineClass, position)
                 .subscribeOn(Schedulers.io())
@@ -143,8 +158,19 @@ public class MainActivity extends BaseActivity {
                         // 弹出Toast提示用户
                         Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
                         if (!resultMessageBean.getMessage().equals("该位置已存在生产线")) {
-                            textView.setBackgroundColor(Color.parseColor(getColor(true)));
+                            switch (lineClass) {
+                                case 1:
+                                    customerAdapter.getItem(position).setCarIsSelect(true);
+                                    break;
+                                case 2:
+                                    customerAdapter.getItem(position).setMpvIsSelect(true);
+                                    break;
+                                case 3:
+                                    customerAdapter.getItem(position).setSuvIsSelect(true);
+                                    break;
+                            }
                         }
+                        customerAdapter.notifyDataSetChanged();
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -205,27 +231,24 @@ public class MainActivity extends BaseActivity {
             tvSuv.setBackgroundColor(Color.parseColor(getColor(getItem(position).isSuvIsSelect())));
 
             // 设置点击事件
-            tvMpv.setOnClickListener(null);
             tvMpv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    createProductionLine(hashMap.get(tvMpv.getText().toString().trim()), getItem(position).getPosition(), tvMpv);
+                    createProductionLine(hashMap.get(tvMpv.getText().toString().trim()), position);
                 }
             });
 
-            tvSuv.setOnClickListener(null);
             tvSuv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    createProductionLine(hashMap.get(tvSuv.getText().toString().trim()), getItem(position).getPosition(), tvSuv);
+                    createProductionLine(hashMap.get(tvSuv.getText().toString().trim()), position);
                 }
             });
 
-            tvCar.setOnClickListener(null);
             tvCar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    createProductionLine(hashMap.get(tvCar.getText().toString().trim()), getItem(position).getPosition(), tvCar);
+                    createProductionLine(hashMap.get(tvCar.getText().toString().trim()), position);
                 }
             });
             Log.i(TAG, "getView: " + getItem(position).toString());
@@ -242,6 +265,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // 取消订阅
         for (Disposable disposable : disposables) {
             if (disposable != null && !disposable.isDisposed()) {
                 disposable.dispose();

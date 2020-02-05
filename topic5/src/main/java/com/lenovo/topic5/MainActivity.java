@@ -31,7 +31,6 @@ import io.reactivex.schedulers.Schedulers;
  * @ProjectName: manufacture
  * @Package: com.lenovo.topic5
  * @ClassName: MainActivity
- * @Author: AYuan
  * @CreateDate: 2020/1/18 16:57
  */
 public class MainActivity extends BaseActivity {
@@ -44,11 +43,19 @@ public class MainActivity extends BaseActivity {
     private PersonAdapter personAdapter;
     private DecimalFormat decimalFormat;
 
+    /**
+     * 获取布局文件
+     *
+     * @return 返回一个布局文件的ID
+     */
     @Override
     protected int getLayoutIdRes() {
         return R.layout.activity_main;
     }
 
+    /**
+     * 初始化控件
+     */
     @Override
     protected void initView() {
         iv_back = findViewById(R.id.iv_back);
@@ -57,6 +64,9 @@ public class MainActivity extends BaseActivity {
         cb_money_sort = findViewById(R.id.cb_money_sort);
     }
 
+    /**
+     * 初始化控件的监听
+     */
     @Override
     protected void initEvent() {
         iv_back.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +91,9 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 初始化需要使用到的类
+     */
     @Override
     protected void initData() {
         // 获取ApiService的实例
@@ -99,15 +112,19 @@ public class MainActivity extends BaseActivity {
      */
     private void getAllPerson() {
         subscribe = remote.getAllPerson()
+                // 切换到子线程进行网络请求
                 .subscribeOn(Schedulers.io())
+                // 数据转换，提取到需要到数据
                 .map(new Function<AllPerson, List<AllPerson.PersonBean>>() {
                     @Override
                     public List<AllPerson.PersonBean> apply(AllPerson allPerson) throws Exception {
                         return allPerson.getData();
                     }
                 })
+                // 切换到主线程运行
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<AllPerson.PersonBean>>() {
+                // 订阅网络请求状态
+                .subscribe(new Consumer<List<AllPerson.PersonBean>>() {// 请求成功的订阅
                     @Override
                     public void accept(List<AllPerson.PersonBean> personBeans) throws Exception {
                         // 将需要展示的集合放进数据适配器中
@@ -115,7 +132,7 @@ public class MainActivity extends BaseActivity {
                         // 刷新数据适配器以展示列表
                         personAdapter.notifyDataSetChanged();
                     }
-                }, new Consumer<Throwable>() {
+                }, new Consumer<Throwable>() {// 请求失败
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         Log.i(TAG, "accept: 网络发生错误：" + throwable.getMessage());
@@ -124,19 +141,26 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * 排序方法
+     * 排序方法（基于Collections类进行排序）
+     *
+     * @param select    排序类型
+     * @param sortModel 升序或降序
      */
     private void sort(int select, boolean sortModel) {
         List<AllPerson.PersonBean> personBeans = personAdapter.getPersonBeans();
+        // 对集合进行判空
         if (personBeans.size() <= 0) {
             Log.i(TAG, "sort: 当前暂无数据");
             return;
         }
+        // 进行排序
         Collections.sort(personBeans, new Comparator<AllPerson.PersonBean>() {
             @Override
             public int compare(AllPerson.PersonBean o1, AllPerson.PersonBean o2) {
+                // 选择类型进行排序
                 switch (select) {
                     case 0:
+                        // 对升序或者降序进行判断
                         if (sortModel) {
                             return o1.getStatus() - o2.getStatus();
                         } else {

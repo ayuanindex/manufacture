@@ -8,7 +8,6 @@ import java.util.List;
  * @ProjectName: manufacture
  * @Package: com.lenovo.topic6.bean
  * @ClassName: ResultMessageBean
- * @Author: AYuan
  * @CreateDate: 2020/1/19 11:36
  */
 public class ResultMessageBean {
