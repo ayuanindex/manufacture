@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
  * @ProjectName: manufacture
  * @Package: com.lenovo.topic6.bean
  * @ClassName: LineClassBean
- * @Author: AYuan
  * @CreateDate: 2020/1/19 10:50
  */
 public class LineClassBean {

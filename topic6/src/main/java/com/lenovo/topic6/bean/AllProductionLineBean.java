@@ -8,7 +8,6 @@ import java.util.List;
  * @ProjectName: manufacture
  * @Package: com.lenovo.topic6.bean
  * @ClassName: AllProductionLineBean
- * @Author: AYuan
  * @CreateDate: 2020/1/19 10:37
  */
 public class AllProductionLineBean {
