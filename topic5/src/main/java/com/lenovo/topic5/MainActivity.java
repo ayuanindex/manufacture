@@ -39,7 +39,6 @@ public class MainActivity extends BaseActivity {
     private CheckBox cb_money_sort;
     private ListView lv_person;
     private ApiService remote;
-    private Disposable subscribe;
     private PersonAdapter personAdapter;
     private DecimalFormat decimalFormat;
 
@@ -110,8 +109,9 @@ public class MainActivity extends BaseActivity {
     /**
      * 获取所有人员信息的网络请求
      */
+    @SuppressLint("CheckResult")
     private void getAllPerson() {
-        subscribe = remote.getAllPerson()
+        remote.getAllPerson()
                 // 切换到子线程进行网络请求
                 .subscribeOn(Schedulers.io())
                 // 数据转换，提取到需要到数据
@@ -123,6 +123,8 @@ public class MainActivity extends BaseActivity {
                 })
                 // 切换到主线程运行
                 .observeOn(AndroidSchedulers.mainThread())
+                // 绑定声明周期
+                .compose(this.bindToLifecycle())
                 // 订阅网络请求状态
                 .subscribe(new Consumer<List<AllPerson.PersonBean>>() {// 请求成功的订阅
                     @Override
@@ -254,19 +256,6 @@ public class MainActivity extends BaseActivity {
 
         public void setPersonBeans(List<AllPerson.PersonBean> personBeans) {
             this.personBeans = personBeans;
-        }
-    }
-
-
-    /**
-     * 当activity销毁时执行
-     */
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (subscribe != null && !subscribe.isDisposed()) {
-            subscribe.dispose();
-            Log.i(TAG, "onDestroy: 取消了订阅");
         }
     }
 }
