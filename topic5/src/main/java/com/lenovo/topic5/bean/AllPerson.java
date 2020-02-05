@@ -6,7 +6,6 @@ import java.util.List;
  * @ProjectName: manufacture
  * @Package: com.lenovo.topic5.bean
  * @ClassName: AllPerson
- * @Author: AYuan
  * @CreateDate: 2020/1/18 17:29
  */
 public class AllPerson {
