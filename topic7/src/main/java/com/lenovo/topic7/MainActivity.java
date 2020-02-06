@@ -102,6 +102,7 @@ public class MainActivity extends BaseActivity {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+                // 设置当前的生产线ID
                 switch (group.getCheckedRadioButtonId()) {
                     case R.id.rbtn_one:
                         currentLineId = hashMap.get(0);
@@ -145,8 +146,9 @@ public class MainActivity extends BaseActivity {
         customerAdapter = new CustomerAdapter();
         lv_person.setAdapter(customerAdapter);
 
-        // 网络请求
+        // 获取所有人员
         getAllPerson();
+        // 获取所有生产线
         getAllProductionLine();
     }
 
@@ -217,14 +219,19 @@ public class MainActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * 新增一个学生员工
+     *
+     * @param item 人员对象
+     */
     @SuppressLint("CheckResult")
     private void createStudentPerson(AllPersonBean.DataBean item) {
-        HashMap map = new HashMap();
-        map.put("userWorkId", 1);
-        map.put("power", item.getHp());
-        map.put("peopleId", item.getId());
-        map.put("userProductionLineId", currentLineId);
-        map.put("workPostId", item.getStatus());
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("userWorkId", 1);// 学生工厂
+        map.put("power", item.getHp()); // 员工体力
+        map.put("peopleId", item.getId());// 人员ID
+        map.put("userProductionLineId", currentLineId);// 生产线ID
+        map.put("workPostId", item.getStatus());// 岗位
         remote.createStudentPerson(map)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -235,6 +242,7 @@ public class MainActivity extends BaseActivity {
                         if (resultMessage.getMessage().equals("SUCCESS")) {
                             Toast.makeText(MainActivity.this, "招募成功", Toast.LENGTH_SHORT).show();
                         }
+                        Log.i(TAG, "哈哈：" + resultMessage.getData().toString());
                         // 删除已经招聘的人员
                         dataBeanList.remove(item);
                         customerAdapter.notifyDataSetChanged();
