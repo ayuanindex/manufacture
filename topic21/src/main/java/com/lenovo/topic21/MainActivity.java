@@ -1,6 +1,7 @@
 package com.lenovo.topic21;
 
 import android.app.DatePickerDialog;
+import android.graphics.Color;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -8,8 +9,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.lenovo.basic.base.act.BaseActivity;
 import com.lenovo.basic.utils.Network;
 
@@ -17,9 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -96,7 +99,10 @@ public class MainActivity extends BaseActivity {
     //初始化折线图
     private void initLineChart() {
         XAxis xAxis = mLineChart.getXAxis();
+        xAxis.setTextSize(16);
+        xAxis.setGranularity(1);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        mLineChart.setBackgroundColor(Color.WHITE);
         mLineChart.getDescription().setText("");
     }
 
@@ -186,6 +192,13 @@ public class MainActivity extends BaseActivity {
      * @param dataBeans
      */
     private void drawLineChart(ArrayList<UserPriceLog.DataBean> dataBeans) throws ParseException {
+        //过滤掉空数据
+        if (dataBeans.size() == 0) {
+            Toast.makeText(this, "当前日期范围没有任何数据", Toast.LENGTH_SHORT).show();
+            mLineChart.setData(new LineData());
+            mLineChart.invalidate();
+            return;
+        }
         //计算出两个日期间相差的天数
         long endTime = sdfParse2.parse(mTvEndDate.getText().toString()).getTime();
         long startTime = sdfParse2.parse(mTvStartDate.getText().toString()).getTime();
@@ -196,17 +209,66 @@ public class MainActivity extends BaseActivity {
         Date date = new Date(startTime);
         for (int i = 0; i < day; i++) {
             xValues.add(sdfParse3.format(date));
+            date = new Date(date.getTime() + 24 * 60 * 60 * 1000);//开始下一天
+        }
+        //设置x轴的数量并格式化x轴的数据显示
+        XAxis xAxis = mLineChart.getXAxis();
+        xAxis.setLabelCount(xValues.size());
+        xAxis.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                int position = (int) value;
+                if (position >= 0 && position < xValues.size())
+                    return xValues.get(position);
+                return "";
+            }
+        });
+
+        //创建Y轴数据------------------
+        List<List<Entry>> yValues = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            yValues.add(new ArrayList<>());
+        }
+        for (int i = 0; i < dataBeans.size(); i++) {
+            UserPriceLog.DataBean dataBean = dataBeans.get(i);
+            String format = sdfParse3.format(sdfParse2.parse(dataBean.getTime()));
+            int type = dataBean.getType();
+            //获取对应的位置的线集合
+            List<Entry> yVal = yValues.get(type);
+            //找到数据属于哪一个x轴
+            int position = xValues.indexOf(format);
+            float enrtyPositionValue = Float.MAX_VALUE;
+            Entry entry = null;
+            for (int j = 0; j < yVal.size(); j++) {
+                entry = yVal.get(j);
+                if (entry.getX() == position) {
+                    enrtyPositionValue = entry.getY();
+                    break;
+                }
+            }
+            if (enrtyPositionValue == Float.MAX_VALUE) {
+                //如果值未变，则集合中不存在，创建该点值
+                yVal.add(new Entry(position, dataBean.getPrice()));
+            } else {
+                //否则，改变该点的值，旧值+新值
+                if (entry != null)
+                    entry.setY(enrtyPositionValue + dataBean.getPrice());
+            }
         }
 
+        //创建颜色集合
+        int[] colors = new int[]{Color.parseColor("#E15071"), Color.parseColor("#F6B056"), Color.parseColor("#10A9AF"), Color.parseColor("#54C1F9"), Color.parseColor("#3269AC"), Color.parseColor("#222222"),};
 
-        //设置x轴的数量
-        mLineChart.getXAxis().setLabelCount(xValues.size());
-
+        //添加线数据
         LineData lineData = new LineData();
+        for (int i = 0; i < yValues.size(); i++) {
+            LineDataSet lineDataSet = new LineDataSet(yValues.get(i), "类型" + i);
+            lineDataSet.setCircleColor(colors[i % colors.length]);//取模避免角标越界
+            lineDataSet.setColor(colors[i % colors.length]);
+            lineData.addDataSet(lineDataSet);
+        }
         mLineChart.setData(lineData);
         mLineChart.invalidate();
-
-
     }
 
 }
