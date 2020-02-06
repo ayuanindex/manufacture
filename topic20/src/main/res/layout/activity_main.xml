@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ccc"
+    android:orientation="vertical"
+    android:padding="@dimen/dp_10"
+    tools:context=".MainActivity">
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb1"
+            android:layout_width="@dimen/dp_80"
+            android:layout_height="wrap_content"
+            android:background="#fff"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:text="推荐"
+            android:textColor="@drawable/text_color_selector"
+            android:textSize="@dimen/sp_14" />
+
+        <RadioButton
+            android:id="@+id/rb2"
+            android:layout_width="@dimen/dp_80"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:background="#fff"
+            android:button="@null"
+            android:gravity="center"
+            android:text="热点"
+            android:textColor="@drawable/text_color_selector"
+            android:textSize="@dimen/sp_14" />
+
+        <RadioButton
+            android:id="@+id/rb3"
+            android:layout_width="@dimen/dp_80"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:background="#fff"
+            android:button="@null"
+            android:gravity="center"
+            android:text="资讯"
+            android:textColor="@drawable/text_color_selector"
+            android:textSize="@dimen/sp_14" />
+
+        <RadioButton
+            android:id="@+id/rb4"
+            android:layout_width="@dimen/dp_80"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:background="#fff"
+            android:button="@null"
+            android:gravity="center"
+            android:text="口碑"
+            android:textColor="@drawable/text_color_selector"
+            android:textSize="@dimen/sp_14" />
+
+
+    </RadioGroup>
+
+    <ListView
+        android:id="@+id/lv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/dp_5"
+        android:background="#fff" />
+
+</LinearLayout>

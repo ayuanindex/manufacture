@@ -6,7 +6,7 @@ android {
 
 
     defaultConfig {
-        applicationId "com.lenovo.topic22"
+        applicationId "com.lenovo.topic20"
         minSdkVersion 24
         targetSdkVersion 29
         versionCode 1

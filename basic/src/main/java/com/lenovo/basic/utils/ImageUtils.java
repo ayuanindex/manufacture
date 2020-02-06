@@ -53,5 +53,11 @@ public class ImageUtils {
         Glide.with(context).load(resId).apply(requestOptions).into(imageView);
     }
 
+    @SuppressLint("CheckResult")
+    public static void setBitmapCenterCrop(Context context, String resId, ImageView imageView) {
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.centerCrop();
+        Glide.with(context).load(resId).apply(requestOptions).into(imageView);
+    }
 
 }

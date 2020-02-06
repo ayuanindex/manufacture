@@ -1,3 +1,4 @@
+include ':topic6', ':topic23', ':topic22', ':topic21', ':topic20'
 include ':topic6', ':topic23', ':topic22', ':topic21', ':topic7'
 include ':topic5'
 include ':topic4'
