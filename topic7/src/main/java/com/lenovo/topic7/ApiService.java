@@ -4,7 +4,6 @@ import com.lenovo.topic7.bean.AllPersonBean;
 import com.lenovo.topic7.bean.AllProductioinLine;
 import com.lenovo.topic7.bean.ResultMessage;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import io.reactivex.Observable;
