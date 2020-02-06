@@ -58,4 +58,7 @@ dependencies {
     api 'com.trello.rxlifecycle3:rxlifecycle:3.1.0'
     api 'com.trello.rxlifecycle3:rxlifecycle-android:3.1.0'
     api 'com.trello.rxlifecycle3:rxlifecycle-components:3.1.0'
+
+    //Retrofit动态设置baseUrl
+    api 'me.jessyan:retrofit-url-manager:1.4.0'
 }

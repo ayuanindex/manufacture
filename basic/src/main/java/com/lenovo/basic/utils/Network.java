@@ -4,6 +4,7 @@ import com.lenovo.basic.BasicApplication;
 
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -17,7 +18,7 @@ public class Network {
     //网络请求读写时长
     private static final int REQUEST_TIME = 30;
     //智能制造URL地址
-    private final static String BASE_URL = "http://101.201.112.95:8085/";
+    public final static String BASE_URL = "http://101.201.112.95:8085/";
 
     // 构建一个Retrofit
     private static Retrofit getRetrofit() {
