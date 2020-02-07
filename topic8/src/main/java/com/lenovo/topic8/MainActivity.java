@@ -103,8 +103,6 @@ public class MainActivity extends BaseActivity {
 
         allPeoples = new ArrayList<AllPeople.DataBean>();
 
-        // 获取所有人员信息
-        getAllPeople();
         // 获取第四条生产线的数据
         getProductionLine(3);
     }
@@ -162,24 +160,7 @@ public class MainActivity extends BaseActivity {
                 .subscribe(new Consumer<LineToPeople>() {
                     @Override
                     public void accept(LineToPeople allStudentBean) throws Exception {
-                        Log.i(TAG, "查询指定生产线的员工信息：" + allStudentBean.toString());
-                        for (LineToPeople.DataBean datum : allStudentBean.getData()) {
-                            //0、工程师，1、工人，2、技术人员，3、检测人员)
-                            switch ((datum.getWorkPostId() - 1 - ((productionClass - 1) * 4))) {
-                                case 0:
-                                    setValue(ll_caozuo, tv_caozuo_name, tv_caozuo_hp, datum);
-                                    break;
-                                case 1:
-                                    setValue(ll_gongcheng, tv_gongcheng_name, tv_gongcheng_hp, datum);
-                                    break;
-                                case 2:
-                                    setValue(ll_jishu, tv_jishu_name, tv_jishu_hp, datum);
-                                    break;
-                                case 3:
-                                    setValue(ll_zhijian, tv_zhijian_name, tv_zhijian_hp, datum);
-                                    break;
-                            }
-                        }
+                        getAllPeople(allStudentBean);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -215,7 +196,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @SuppressLint("CheckResult")
-    private void getAllPeople() {
+    private void getAllPeople(LineToPeople allStudentBean) {
         remote.getAllPeople()
                 .compose(this.bindToLifecycle())
                 .subscribeOn(Schedulers.io())
@@ -230,6 +211,25 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void accept(List<AllPeople.DataBean> dataBeans) throws Exception {
                         allPeoples = dataBeans;
+                        Log.i(TAG, "网络请求成功，所有人员信息" + dataBeans.toString());
+                        Log.i(TAG, "查询指定生产线的员工信息：" + allStudentBean.toString());
+                        for (LineToPeople.DataBean datum : allStudentBean.getData()) {
+                            //0、工程师，1、工人，2、技术人员，3、检测人员)
+                            switch ((datum.getWorkPostId() - 1 - ((productionClass - 1) * 4))) {
+                                case 0:
+                                    setValue(ll_caozuo, tv_caozuo_name, tv_caozuo_hp, datum);
+                                    break;
+                                case 1:
+                                    setValue(ll_gongcheng, tv_gongcheng_name, tv_gongcheng_hp, datum);
+                                    break;
+                                case 2:
+                                    setValue(ll_jishu, tv_jishu_name, tv_jishu_hp, datum);
+                                    break;
+                                case 3:
+                                    setValue(ll_zhijian, tv_zhijian_name, tv_zhijian_hp, datum);
+                                    break;
+                            }
+                        }
                     }
                 }, new Consumer<Throwable>() {
                     @Override
