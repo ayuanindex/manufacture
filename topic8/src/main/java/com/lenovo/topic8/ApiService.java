@@ -3,10 +3,14 @@ package com.lenovo.topic8;
 import com.lenovo.topic8.bean.AllPeople;
 import com.lenovo.topic8.bean.LineToPeople;
 import com.lenovo.topic8.bean.ProductionLine;
+import com.lenovo.topic8.bean.ResultMessage;
 import com.lenovo.topic8.bean.ResultMessageBean;
+
+import java.util.Map;
 
 import io.reactivex.Observable;
 import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
 
@@ -47,4 +51,8 @@ public interface ApiService {
 
     @POST("dataInterface/People/getAll")
     Observable<AllPeople> getAllPeople();
+
+    @POST("dataInterface/UserPeople/create")
+    @FormUrlEncoded
+    Observable<ResultMessage> createStudent(@FieldMap Map<String, Object> map);
 }

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -17,9 +18,11 @@ import com.lenovo.basic.utils.Network;
 import com.lenovo.topic8.bean.AllPeople;
 import com.lenovo.topic8.bean.LineToPeople;
 import com.lenovo.topic8.bean.ProductionLine;
+import com.lenovo.topic8.bean.ResultMessage;
 import com.lenovo.topic8.bean.ResultMessageBean;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -91,6 +94,73 @@ public class MainActivity extends BaseActivity {
                 closeActivity();
             }
         });
+
+        ll_gongcheng.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                distribution(0);
+            }
+        });
+
+        ll_jishu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                distribution(2);
+            }
+        });
+
+        ll_caozuo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                distribution(1);
+            }
+        });
+
+        ll_zhijian.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                distribution(3);
+            }
+        });
+    }
+
+    /**
+     * 分配员工
+     *
+     * @param type
+     */
+    @SuppressLint("CheckResult")
+    private void distribution(int type) {
+        for (AllPeople.DataBean allPeople : allPeoples) {
+            if (allPeople.getStatus() == type) {
+                //0、工程师，1、工人，2、技术人员，3、检测人员)
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("userWorkId", 1);// 学生工厂
+                map.put("power", allPeople.getHp()); // 员工体力
+                map.put("peopleId", allPeople.getId());// 人员ID
+                map.put("userProductionLineId", productionLineId);// 生产线ID
+                map.put("workPostId", (allPeople.getStatus() + 1) + ((productionClass - 1) * 4));// 岗位
+                remote.createStudent(map)
+                        .compose(this.bindToLifecycle())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<ResultMessage>() {
+                            @Override
+                            public void accept(ResultMessage resultMessage) throws Exception {
+                                if (resultMessage.getMessage().equals("SUCCESS")) {
+                                    Toast.makeText(MainActivity.this, "招募成功", Toast.LENGTH_SHORT).show();
+                                }
+                                getLineToPeople(productionLineId);
+                            }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
+                                Log.i(TAG, "出现错误：创建学生员工失败：" + throwable.getMessage());
+                            }
+                        });
+                break;
+            }
+        }
     }
 
     /**
