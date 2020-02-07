@@ -31,7 +31,6 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity {
-
     private ImageView iv_back;
     private TextView tv_gongcheng_name;
     private TextView tv_gongcheng_hp;
@@ -49,11 +48,6 @@ public class MainActivity extends BaseActivity {
     private int productionClass;
     private int productionLineId;
     private List<AllPeople.DataBean> allPeoples;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-    }
 
     /**
      * @return 获取界面布局的资源ID
@@ -125,45 +119,6 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * 分配员工
-     *
-     * @param type
-     */
-    @SuppressLint("CheckResult")
-    private void distribution(int type) {
-        for (AllPeople.DataBean allPeople : allPeoples) {
-            if (allPeople.getStatus() == type) {
-                //0、工程师，1、工人，2、技术人员，3、检测人员)
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("userWorkId", 1);// 学生工厂
-                map.put("power", allPeople.getHp()); // 员工体力
-                map.put("peopleId", allPeople.getId());// 人员ID
-                map.put("userProductionLineId", productionLineId);// 生产线ID
-                map.put("workPostId", (allPeople.getStatus() + 1) + ((productionClass - 1) * 4));// 岗位
-                remote.createStudent(map)
-                        .compose(this.bindToLifecycle())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Consumer<ResultMessage>() {
-                            @Override
-                            public void accept(ResultMessage resultMessage) throws Exception {
-                                if (resultMessage.getMessage().equals("SUCCESS")) {
-                                    Toast.makeText(MainActivity.this, "招募成功", Toast.LENGTH_SHORT).show();
-                                }
-                                getLineToPeople(productionLineId);
-                            }
-                        }, new Consumer<Throwable>() {
-                            @Override
-                            public void accept(Throwable throwable) throws Exception {
-                                Log.i(TAG, "出现错误：创建学生员工失败：" + throwable.getMessage());
-                            }
-                        });
-                break;
-            }
-        }
-    }
-
-    /**
      * 初始化需要使用的工具类
      */
     @Override
@@ -217,6 +172,34 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
+     * 创建生产线
+     *
+     * @param productionClass
+     */
+    @SuppressLint("CheckResult")
+    private void createProduction(int productionClass) {
+        remote.createProduction(productionClass, 3)
+                .compose(this.bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<ResultMessageBean>() {
+                    @Override
+                    public void accept(ResultMessageBean resultMessageBean) throws Exception {
+                        if (!resultMessageBean.getMessage().equals("该位置已存在生产线")) {
+                            Log.i(TAG, "生产线创建成功");
+                            // 重新查询
+                            getProductionLine(3);
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.i(TAG, "网路请求出现问题，生产线创建失败：" + throwable.getMessage());
+                    }
+                });
+    }
+
+    /**
      * 查询指定生产线所有员工信息
      *
      * @param productionLineId 生产线ID
@@ -230,6 +213,7 @@ public class MainActivity extends BaseActivity {
                 .subscribe(new Consumer<LineToPeople>() {
                     @Override
                     public void accept(LineToPeople allStudentBean) throws Exception {
+                        // 获取获取所有人员与学生员工进行比对，查出姓名
                         getAllPeople(allStudentBean);
                     }
                 }, new Consumer<Throwable>() {
@@ -238,31 +222,6 @@ public class MainActivity extends BaseActivity {
                         Log.i(TAG, "网络请求发生错误，获取学生员工失败：" + throwable.getMessage());
                     }
                 });
-    }
-
-    /**
-     * 给控件设置值
-     *
-     * @param ll
-     * @param tv_name
-     * @param tv_hp
-     * @param datum
-     */
-    @SuppressLint("SetTextI18n")
-    private void setValue(LinearLayout ll, TextView tv_name, TextView tv_hp, LineToPeople.DataBean datum) {
-        if (allPeoples.size() == 0) {
-            Log.i(TAG, "所有人员信息为空");
-            return;
-        }
-        tv_name.setVisibility(View.VISIBLE);
-        tv_hp.setVisibility(View.VISIBLE);
-        for (AllPeople.DataBean allPeople : allPeoples) {
-            if (datum.getPeopleId() == allPeople.getId()) {
-                tv_name.setText("姓名：" + allPeople.getPeopleName());
-                tv_hp.setText("体力：" + datum.getPower() + "");
-            }
-        }
-        ll.setBackgroundColor(Color.parseColor("#6F96FE"));
     }
 
     @SuppressLint("CheckResult")
@@ -310,30 +269,65 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * 创建生产线
+     * 给控件设置值
      *
-     * @param productionClass
+     * @param ll
+     * @param tv_name
+     * @param tv_hp
+     * @param datum
+     */
+    @SuppressLint("SetTextI18n")
+    private void setValue(LinearLayout ll, TextView tv_name, TextView tv_hp, LineToPeople.DataBean datum) {
+        if (allPeoples.size() == 0) {
+            Log.i(TAG, "所有人员信息为空");
+            return;
+        }
+        tv_name.setVisibility(View.VISIBLE);
+        tv_hp.setVisibility(View.VISIBLE);
+        for (AllPeople.DataBean allPeople : allPeoples) {
+            if (datum.getPeopleId() == allPeople.getId()) {
+                tv_name.setText("姓名：" + allPeople.getPeopleName());
+                tv_hp.setText("体力：" + datum.getPower() + "");
+            }
+        }
+        ll.setBackgroundColor(Color.parseColor("#6F96FE"));
+    }
+
+    /**
+     * 分配员工
+     *
+     * @param type 需要分配的岗位类型（ 0、工程师，1、工人，2、技术人员，3、检测人员)）
      */
     @SuppressLint("CheckResult")
-    private void createProduction(int productionClass) {
-        remote.createProduction(productionClass, 3)
-                .compose(this.bindToLifecycle())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<ResultMessageBean>() {
-                    @Override
-                    public void accept(ResultMessageBean resultMessageBean) throws Exception {
-                        if (!resultMessageBean.getMessage().equals("该位置已存在生产线")) {
-                            Log.i(TAG, "生产线创建成功");
-                            // 重新查询
-                            getProductionLine(3);
-                        }
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Log.i(TAG, "网路请求出现问题，生产线创建失败：" + throwable.getMessage());
-                    }
-                });
+    private void distribution(int type) {
+        for (AllPeople.DataBean allPeople : allPeoples) {
+            if (allPeople.getStatus() == type) {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("userWorkId", 1);// 学生工厂
+                map.put("power", allPeople.getHp()); // 员工体力
+                map.put("peopleId", allPeople.getId());// 人员ID
+                map.put("userProductionLineId", productionLineId);// 生产线ID
+                map.put("workPostId", (allPeople.getStatus() + 1) + ((productionClass - 1) * 4));// 岗位
+                remote.createStudent(map)
+                        .compose(this.bindToLifecycle())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<ResultMessage>() {
+                            @Override
+                            public void accept(ResultMessage resultMessage) throws Exception {
+                                if (resultMessage.getMessage().equals("SUCCESS")) {
+                                    Toast.makeText(MainActivity.this, "招募成功", Toast.LENGTH_SHORT).show();
+                                }
+                                getLineToPeople(productionLineId);
+                            }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
+                                Log.i(TAG, "出现错误：创建学生员工失败：" + throwable.getMessage());
+                            }
+                        });
+                break;
+            }
+        }
     }
 }
