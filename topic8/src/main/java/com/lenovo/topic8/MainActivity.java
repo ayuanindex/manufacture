@@ -140,10 +140,14 @@ public class MainActivity extends BaseActivity {
     @SuppressLint("CheckResult")
     private void getProductionLine(int position) {
         remote.getProductionLine(position)
+                // 绑定activity的生命周期
                 .compose(this.bindToLifecycle())
+                // 切换到子线程进行网络请求
                 .subscribeOn(Schedulers.io())
+                // 切换到主线程展示拿到的数据
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<ProductionLine>() {
+                // 订阅请求状态
+                .subscribe(new Consumer<ProductionLine>() {// 请求成功
                     @Override
                     public void accept(ProductionLine productionLine) throws Exception {
                         Log.i(TAG, "请求成功" + productionLine.toString());
@@ -158,12 +162,11 @@ public class MainActivity extends BaseActivity {
                             productionClass = productionLine.getData().get(0).getProductionLineId();
                             // 拿到第四条生产线的ID
                             productionLineId = productionLine.getData().get(0).getId();
-                            Log.i(TAG, "当前ID：" + productionLineId);
                             // 获取当前生产线的学生员工
                             getLineToPeople(productionLineId);
                         }
                     }
-                }, new Consumer<Throwable>() {
+                }, new Consumer<Throwable>() {// 请求失败或处理数据出现异常
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         Log.i(TAG, "网络请求发生错误,生产线查询失败：" + throwable.getMessage());
@@ -187,7 +190,7 @@ public class MainActivity extends BaseActivity {
                     public void accept(ResultMessageBean resultMessageBean) throws Exception {
                         if (!resultMessageBean.getMessage().equals("该位置已存在生产线")) {
                             Log.i(TAG, "生产线创建成功");
-                            // 重新查询
+                            // 重新查询位置4的生产线，拿到生产线ID
                             getProductionLine(3);
                         }
                     }
@@ -224,6 +227,9 @@ public class MainActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * 获取所有员工
+     */
     @SuppressLint("CheckResult")
     private void getAllPeople(LineToPeople allStudentBean) {
         remote.getAllPeople()
@@ -244,6 +250,7 @@ public class MainActivity extends BaseActivity {
                         Log.i(TAG, "查询指定生产线的员工信息：" + allStudentBean.toString());
                         for (LineToPeople.DataBean datum : allStudentBean.getData()) {
                             //0、工程师，1、工人，2、技术人员，3、检测人员)
+                            //算出当前员工的岗位(员工类型 = 对应岗位 - 1 - （（生产线类型 - 1） * 4）)需要对照数据帮助表
                             switch ((datum.getWorkPostId() - 1 - ((productionClass - 1) * 4))) {
                                 case 0:
                                     setValue(ll_caozuo, tv_caozuo_name, tv_caozuo_hp, datum);
@@ -278,18 +285,25 @@ public class MainActivity extends BaseActivity {
      */
     @SuppressLint("SetTextI18n")
     private void setValue(LinearLayout ll, TextView tv_name, TextView tv_hp, LineToPeople.DataBean datum) {
+        // 判断是否已经拿到了所有员工的数据（因为数据不会及时返回）
         if (allPeoples.size() == 0) {
             Log.i(TAG, "所有人员信息为空");
             return;
         }
+
+        // 将控件设置为可视状态
         tv_name.setVisibility(View.VISIBLE);
         tv_hp.setVisibility(View.VISIBLE);
+
+        // 找出学生员工对应的姓名，并将其填充到控件上
         for (AllPeople.DataBean allPeople : allPeoples) {
             if (datum.getPeopleId() == allPeople.getId()) {
                 tv_name.setText("姓名：" + allPeople.getPeopleName());
                 tv_hp.setText("体力：" + datum.getPower() + "");
             }
         }
+
+        // 重新设置方块的背景颜色
         ll.setBackgroundColor(Color.parseColor("#6F96FE"));
     }
 
@@ -307,7 +321,7 @@ public class MainActivity extends BaseActivity {
                 map.put("power", allPeople.getHp()); // 员工体力
                 map.put("peopleId", allPeople.getId());// 人员ID
                 map.put("userProductionLineId", productionLineId);// 生产线ID
-                map.put("workPostId", (allPeople.getStatus() + 1) + ((productionClass - 1) * 4));// 岗位
+                map.put("workPostId", (allPeople.getStatus() + 1) + ((productionClass - 1) * 4));// 对应岗位 = 员工类型 + 1 + （（生产线类型 - 1） * 4）
                 remote.createStudent(map)
                         .compose(this.bindToLifecycle())
                         .subscribeOn(Schedulers.io())
