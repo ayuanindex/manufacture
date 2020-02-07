@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -50,11 +49,11 @@ public class MainActivity extends BaseActivity {
     /**
      * 存放订阅的集合
      */
-    private ArrayList<Disposable> disposables;
     private List<AllPersonBean.DataBean> dataBeanList;
     private DecimalFormat decimalFormat;
     private RadioGroup radioGroup;
-    private HashMap<Integer, Integer> hashMap;
+    private List<AllProductioinLine.DataBean> production;
+    private int productionClass;
 
     /**
      * @return 返回布局的ID
@@ -105,16 +104,16 @@ public class MainActivity extends BaseActivity {
                 // 设置当前的生产线ID
                 switch (group.getCheckedRadioButtonId()) {
                     case R.id.rbtn_one:
-                        currentLineId = hashMap.get(0);
+                        setCurrentProduction(0);
                         break;
                     case R.id.rbtn_two:
-                        currentLineId = hashMap.get(1);
+                        setCurrentProduction(1);
                         break;
                     case R.id.rbtn_three:
-                        currentLineId = hashMap.get(2);
+                        setCurrentProduction(2);
                         break;
                     case R.id.rbtn_four:
-                        currentLineId = hashMap.get(3);
+                        setCurrentProduction(3);
                         break;
                 }
                 Log.i(TAG, "onCheckedChanged: " + currentLineId);
@@ -136,11 +135,6 @@ public class MainActivity extends BaseActivity {
 
         // 数字格式化
         decimalFormat = new DecimalFormat("#,###");
-
-        hashMap = new HashMap<>();
-        for (int i = 0; i < 4; i++) {
-            hashMap.put(i, 0);
-        }
 
         // 设置数据适配器
         customerAdapter = new CustomerAdapter();
@@ -205,11 +199,8 @@ public class MainActivity extends BaseActivity {
                 .subscribe(new Consumer<List<AllProductioinLine.DataBean>>() {
                     @Override
                     public void accept(List<AllProductioinLine.DataBean> dataBeans) throws Exception {
+                        production = dataBeans;
                         Log.i(TAG, "请求成功：" + dataBeans.toString());
-                        // 将对应位置的生产线简化成所需要的map集合
-                        for (AllProductioinLine.DataBean dataBean : dataBeans) {
-                            hashMap.put(dataBean.getPosition(), dataBean.getId());
-                        }
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -217,6 +208,21 @@ public class MainActivity extends BaseActivity {
                         Log.i(TAG, "网络请求发生错误：" + throwable.getMessage());
                     }
                 });
+    }
+
+    /**
+     * 遍历找出当前位置的生产线信息
+     *
+     * @param position 位置
+     */
+    private void setCurrentProduction(int position) {
+        for (AllProductioinLine.DataBean dataBean : production) {
+            if (dataBean.getPosition() == position) {
+                currentLineId = dataBean.getId();
+                productionClass = dataBean.getProductionLineId();
+                break;
+            }
+        }
     }
 
     /**
@@ -231,7 +237,8 @@ public class MainActivity extends BaseActivity {
         map.put("power", item.getHp()); // 员工体力
         map.put("peopleId", item.getId());// 人员ID
         map.put("userProductionLineId", currentLineId);// 生产线ID
-        map.put("workPostId", item.getStatus());// 岗位
+        map.put("workPostId", (item.getStatus() + 1) + ((productionClass - 1) * 4));// 岗位
+        Log.i(TAG, "createStudentPerson: " + map.get("workPostId"));
         remote.createStudentPerson(map)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
