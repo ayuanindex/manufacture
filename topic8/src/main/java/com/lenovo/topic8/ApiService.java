@@ -49,9 +49,17 @@ public interface ApiService {
     @FormUrlEncoded
     Observable<ResultMessageBean> createProduction(@Field("lineId") int lineId, @Field("pos") int position);
 
+    /**
+     * 获取所有人员信息
+     */
     @POST("dataInterface/People/getAll")
     Observable<AllPeople> getAllPeople();
 
+    /**
+     * 床架学生员工
+     *
+     * @param map 学生员工信息键值对
+     */
     @POST("dataInterface/UserPeople/create")
     @FormUrlEncoded
     Observable<ResultMessage> createStudent(@FieldMap Map<String, Object> map);
