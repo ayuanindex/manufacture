@@ -19,6 +19,7 @@ public class Network {
     private static final int REQUEST_TIME = 30;
     //智能制造URL地址
     public final static String BASE_URL = "http://101.201.112.95:8085/";
+    public final static String ip = "http://101.201.112.95";
 
     // 构建一个Retrofit
     private static Retrofit getRetrofit() {

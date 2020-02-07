@@ -31,7 +31,7 @@ public class MainActivity extends BaseActivity {
     private ApiService apiService;
     private ListView mLv;
     private MyAdapter mAdapter;
-    private String ip = "http://101.201.112.95/2019";
+    private String ip = Network.ip;
 
     @Override
     protected int getLayoutIdRes() {
