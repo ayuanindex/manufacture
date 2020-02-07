@@ -1,5 +1,6 @@
 package com.lenovo.topic8;
 
+import com.lenovo.topic8.bean.AllPeople;
 import com.lenovo.topic8.bean.LineToPeople;
 import com.lenovo.topic8.bean.ProductionLine;
 import com.lenovo.topic8.bean.ResultMessageBean;
@@ -43,4 +44,7 @@ public interface ApiService {
     @POST("Interface/index/createStudentLine")
     @FormUrlEncoded
     Observable<ResultMessageBean> createProduction(@Field("lineId") int lineId, @Field("pos") int position);
+
+    @POST("dataInterface/People/getAll")
+    Observable<AllPeople> getAllPeople();
 }
