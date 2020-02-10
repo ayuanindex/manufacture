@@ -114,10 +114,15 @@ public class MainActivity extends BaseActivity {
     @SuppressLint("CheckResult")
     private void getProductionLine() {
         remote.getProductionLine(3)
+                // 绑定生命周期
                 .compose(this.bindToLifecycle())
+                // 切换到子线程进行网络请求
                 .subscribeOn(Schedulers.io())
+                // 类型转换处理数据
                 .map(SearchProductionLineBean::getData)
+                // 切换到主线程对数据进行展示
                 .observeOn(AndroidSchedulers.mainThread())
+                // 订阅网络请求状态
                 .subscribe(new Consumer<List<SearchProductionLineBean.DataBean>>() {
                     @Override
                     public void accept(List<SearchProductionLineBean.DataBean> dataBeans) throws Exception {
