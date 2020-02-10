@@ -43,6 +43,7 @@ public class MainActivity extends BaseActivity {
     private DecimalFormat decimalFormat;
     private CustomerAdapter customerAdapter;
     private int productionLineId;
+    private int workPrice;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
@@ -190,7 +191,8 @@ public class MainActivity extends BaseActivity {
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void accept(WorkInfoBean.DataBean dataBean) throws Exception {
-                        tv_funds.setText("工厂资金：" + dataBean.getPrice() + "");
+                        workPrice = dataBean.getPrice();
+                        tv_funds.setText("工厂资金：" + workPrice + "");
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -287,6 +289,10 @@ public class MainActivity extends BaseActivity {
 
         @SuppressLint("CheckResult")
         private void addMaterialStore(Material.DataBean item) {
+            if (item.getSize() * item.getPrice() > workPrice) {
+                Toast.makeText(MainActivity.this, "资金不足", Toast.LENGTH_SHORT).show();
+                return;
+            }
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("userLineId", productionLineId);
             hashMap.put("num", item.getSize());
@@ -300,6 +306,8 @@ public class MainActivity extends BaseActivity {
                         @Override
                         public void accept(String s) throws Exception {
                             Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
+                            // 重新查询工厂资金
+                            workPrice = workPrice - (item.getSize() * item.getPrice());
                         }
                     }, new Consumer<Throwable>() {
                         @Override
