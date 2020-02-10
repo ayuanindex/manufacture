@@ -11,17 +11,24 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import com.lenovo.basic.base.act.BaseActivity;
 import com.lenovo.basic.utils.Network;
 import com.lenovo.topic11.bean.Material;
+import com.lenovo.topic11.bean.ResultMessage_CreateProductionLine;
+import com.lenovo.topic11.bean.ResultMessage_Store;
+import com.lenovo.topic11.bean.SearchProductionLineBean;
+import com.lenovo.topic11.bean.WorkInfoBean;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
@@ -35,6 +42,7 @@ public class MainActivity extends BaseActivity {
     private List<Material.DataBean> materialBeans;
     private DecimalFormat decimalFormat;
     private CustomerAdapter customerAdapter;
+    private int productionLineId;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
@@ -90,8 +98,106 @@ public class MainActivity extends BaseActivity {
         customerAdapter = new CustomerAdapter();
         lv_list.setAdapter(customerAdapter);
 
+        //-------------------获取数据------------------
+        // 获取指定位置的生产线
+        getProductionLine();
+        // 获取车间的资金
+        getWorkInfo();
         // 获取原材料详情
         getMaterial();
+    }
+
+    /**
+     * 获取指定位置的生产线
+     */
+    @SuppressLint("CheckResult")
+    private void getProductionLine() {
+        remote.getProductionLine(3)
+                .compose(this.bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .map(SearchProductionLineBean::getData)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<SearchProductionLineBean.DataBean>>() {
+                    @Override
+                    public void accept(List<SearchProductionLineBean.DataBean> dataBeans) throws Exception {
+                        if (dataBeans.size() == 0) {
+                            Log.i(TAG, "生产线不存在");
+                            // 创建生产线
+                            createProductionLine();
+                        } else {
+                            // 拿到生产线ID
+                            productionLineId = dataBeans.get(0).getId();
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.i(TAG, "出现错误：" + throwable.getMessage());
+                    }
+                });
+    }
+
+    /**
+     * 创建生产线
+     */
+    @SuppressLint("CheckResult")
+    private void createProductionLine() {
+        remote.createProduction(3, 3)
+                .compose(this.bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .map(new Function<ResultMessage_CreateProductionLine, String>() {
+                    @Override
+                    public String apply(ResultMessage_CreateProductionLine resultMessage_createProductionLine) throws Exception {
+                        return resultMessage_createProductionLine.getMessage();
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(String s) throws Exception {
+                        if (s.equals("创建学生生产线成功") || s.equals("该位置已存在生产线")) {
+                            // 重新获取当前生产线ID
+                            getProductionLine();
+                        } else {
+                            // 重新创建生产线
+                            createProductionLine();
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.i(TAG, "出现错误：" + throwable.getMessage());
+                    }
+                });
+    }
+
+    /**
+     * 获取工厂信息
+     */
+    @SuppressLint("CheckResult")
+    private void getWorkInfo() {
+        remote.getWorkInfo(1)
+                .compose(this.bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .map(new Function<WorkInfoBean, WorkInfoBean.DataBean>() {
+                    @Override
+                    public WorkInfoBean.DataBean apply(WorkInfoBean workInfoBean) throws Exception {
+                        return workInfoBean.getData().get(0);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<WorkInfoBean.DataBean>() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void accept(WorkInfoBean.DataBean dataBean) throws Exception {
+                        tv_funds.setText("工厂资金：" + dataBean.getPrice() + "");
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.i(TAG, "出现错误：" + throwable.getMessage());
+                    }
+                });
     }
 
     /**
@@ -164,8 +270,8 @@ public class MainActivity extends BaseActivity {
             btnBuy.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO: 2020-02-10
-                    Log.i(TAG, "购买");
+                    // 购入原材料
+                    addMaterialStore(getItem(position));
                 }
             });
             return view;
@@ -178,6 +284,29 @@ public class MainActivity extends BaseActivity {
             tvSupplier = (TextView) view.findViewById(R.id.tv_supplier);
             btnBuy = (Button) view.findViewById(R.id.btn_buy);
         }
-    }
 
+        @SuppressLint("CheckResult")
+        private void addMaterialStore(Material.DataBean item) {
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("userLineId", productionLineId);
+            hashMap.put("num", item.getSize());
+            hashMap.put("supplyListId", item.getSupplyListId());
+            remote.addMaterialStore(hashMap)
+                    .compose(MainActivity.this.bindToLifecycle())
+                    .subscribeOn(Schedulers.io())
+                    .map(ResultMessage_Store::getMessage)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<String>() {
+                        @Override
+                        public void accept(String s) throws Exception {
+                            Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+                            Log.i(TAG, "出现错误：" + throwable.getMessage());
+                        }
+                    });
+        }
+    }
 }
