@@ -5,11 +5,8 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="manufacture/app" />
       <module fileurl="file://$PROJECT_DIR$/basic/basic.iml" filepath="$PROJECT_DIR$/basic/basic.iml" group="manufacture/basic" />
       <module fileurl="file://$PROJECT_DIR$/manufacture.iml" filepath="$PROJECT_DIR$/manufacture.iml" group="manufacture" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/topic20/manufacture-topic20.iml" filepath="$PROJECT_DIR$/.idea/modules/topic20/manufacture-topic20.iml" group="manufacture/topic20" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/topic21/manufacture-topic21.iml" filepath="$PROJECT_DIR$/.idea/modules/topic21/manufacture-topic21.iml" group="manufacture/topic21" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/topic22/manufacture-topic22.iml" filepath="$PROJECT_DIR$/.idea/modules/topic22/manufacture-topic22.iml" group="manufacture/topic22" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/topic23/manufacture-topic23.iml" filepath="$PROJECT_DIR$/.idea/modules/topic23/manufacture-topic23.iml" group="manufacture/topic23" />
       <module fileurl="file://$PROJECT_DIR$/topic1/topic1.iml" filepath="$PROJECT_DIR$/topic1/topic1.iml" group="manufacture/topic1" />
+      <module fileurl="file://$PROJECT_DIR$/topic10/topic10.iml" filepath="$PROJECT_DIR$/topic10/topic10.iml" />
       <module fileurl="file://$PROJECT_DIR$/topic2/topic2.iml" filepath="$PROJECT_DIR$/topic2/topic2.iml" group="manufacture/topic2" />
       <module fileurl="file://$PROJECT_DIR$/topic20/topic20.iml" filepath="$PROJECT_DIR$/topic20/topic20.iml" />
       <module fileurl="file://$PROJECT_DIR$/topic21/topic21.iml" filepath="$PROJECT_DIR$/topic21/topic21.iml" />
