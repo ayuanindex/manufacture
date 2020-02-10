@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <!--标题栏-->
@@ -25,9 +26,89 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="人员休息"
+            android:text="供货列表"
             android:textColor="#000000"
             android:textSize="@dimen/sp_12" />
     </RelativeLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#DADAD8"
+        android:orientation="vertical"
+        android:padding="@dimen/dp_10">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dp_1"
+                android:layout_weight="1"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:padding="@dimen/dp_5"
+                android:text="商品"
+                android:textSize="@dimen/sp_14"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dp_1"
+                android:layout_weight="1"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:padding="@dimen/dp_5"
+                android:text="价格"
+                android:textSize="@dimen/sp_14"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dp_1"
+                android:layout_weight="1"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:padding="@dimen/dp_5"
+                android:text="数量"
+                android:textSize="@dimen/sp_14"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dp_1"
+                android:layout_weight="1"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:padding="@dimen/dp_5"
+                android:text="单价"
+                android:textSize="@dimen/sp_14"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dp_1"
+                android:layout_weight="1"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:padding="@dimen/dp_5"
+                android:text="供应商"
+                android:textSize="@dimen/sp_14"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/lv_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/dp_1"
+            android:dividerHeight="@dimen/dp_1" />
+    </LinearLayout>
 </LinearLayout>
