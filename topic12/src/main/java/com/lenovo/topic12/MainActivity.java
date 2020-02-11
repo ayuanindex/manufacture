@@ -9,15 +9,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lenovo.basic.base.act.BaseActivity;
 import com.lenovo.basic.utils.Network;
-import com.lenovo.topic12.bean.MaterialBean;
+import com.lenovo.topic12.bean.PartBean;
+import com.lenovo.topic12.bean.PartStoreBean;
 import com.lenovo.topic12.bean.ProductionLineBean;
+import com.lenovo.topic12.bean.ResultMessage_Material;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
@@ -33,8 +35,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private Button btn_three;
     private Button btn_four;
     private ApiService remote;
-    private List<MaterialBean.DataBean> materialBeans;
+    private List<PartStoreBean.DataBean> partStoreBeans;
     private CustomerAdapter customerAdapter;
+    private ArrayList<ProductionLineBean.DataBean> productionLineBeans;
+    private List<PartBean.DataBean> partBeans;
 
     /**
      * 获取资源ID
@@ -75,6 +79,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_one:
+                replenishment(0);
+                break;
+            case R.id.btn_two:
+                replenishment(1);
+                break;
+            case R.id.btn_three:
+                replenishment(2);
+                break;
+            case R.id.btn_four:
+                replenishment(3);
+                break;
+        }
+    }
+
     /**
      * 初始话数据
      */
@@ -84,9 +106,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         remote = Network.remote(ApiService.class);
 
         // 初始化列表数据源的集合
-        materialBeans = new ArrayList<>();
+        partStoreBeans = new ArrayList<>();
 
         // 初始化4条生茶线的集合
+        productionLineBeans = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            productionLineBeans.add(new ProductionLineBean.DataBean(i));
+        }
 
         // 初始化数据适配器
         customerAdapter = new CustomerAdapter();
@@ -94,9 +120,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         // 获取所有生产线
         requestAllProductionLine();
-
-        // 请求获取原材料详情
-        requestMaterial();
     }
 
     /**
@@ -122,6 +145,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                     o.setProductionLineName("SUV生产线");
                                     break;
                             }
+                            // 将有的生产线塞到对应的位置
+                            for (int i = 0; i < productionLineBeans.size(); i++) {
+                                if (productionLineBeans.get(i).getPosition() == o.getPosition()) {
+                                    productionLineBeans.set(i, o);
+                                }
+                            }
                         }
                         return productionLineBean.getData();
                     }
@@ -130,52 +159,81 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 .subscribe(new Consumer<List<ProductionLineBean.DataBean>>() {
                     @Override
                     public void accept(List<ProductionLineBean.DataBean> dataBeans) throws Exception {
-
+                        Log.i(TAG, "处理成功：" + productionLineBeans.toString());
+                        // 查询全部原材料
+                        getAllPart();
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-
+                        Log.i(TAG, "出现错误：" + throwable.getMessage());
                     }
                 });
     }
 
     /**
-     * 获取所有原材料信息
+     * 查询全部原材料
      */
     @SuppressLint("CheckResult")
-    private void requestMaterial() {
-        remote.getMaterial()
+    private void getAllPart() {
+        remote.getAllPart()
+                .compose(this.bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .map(PartBean::getData)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<PartBean.DataBean>>() {
+                    @Override
+                    public void accept(List<PartBean.DataBean> dataBeans) throws Exception {
+                        partBeans = dataBeans;
+                        // 查询仓库中的所有原材料
+                        getAllPartStore();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.i(TAG, "出现错误 ：" + throwable.getMessage());
+                    }
+                });
+    }
+
+    /**
+     * 获取仓库中所有原材料信息
+     */
+    @SuppressLint("CheckResult")
+    private void getAllPartStore() {
+        remote.getPartStore()
                 // 绑定生命周期
                 .compose(this.bindToLifecycle())
                 // 切换到子线程进行网络请求
                 .subscribeOn(Schedulers.io())
                 // 处理请求成功的数据
-                .map(new Function<MaterialBean, List<MaterialBean.DataBean>>() {
+                .map(new Function<PartStoreBean, List<PartStoreBean.DataBean>>() {
                     @Override
-                    public List<MaterialBean.DataBean> apply(MaterialBean materialBean) throws Exception {
-                        // 匹配适合的生产线
-                        for (MaterialBean.DataBean o : materialBean.getData()) {
-                            // 匹配字符串中是否存在指定字符
-                            if (Pattern.compile("轿车").matcher(o.getMaterialName()).find()) {
-                                o.setProductionLineClass(1);
-                            } else if (Pattern.compile("MPV").matcher(o.getMaterialName()).find()) {
-                                o.setProductionLineClass(2);
-                            } else if (Pattern.compile("SUV").matcher(o.getMaterialName()).find()) {
-                                o.setProductionLineClass(3);
+                    public List<PartStoreBean.DataBean> apply(PartStoreBean partStoreBean) throws Exception {
+                        for (PartStoreBean.DataBean o : partStoreBean.getData()) {
+                            for (PartBean.DataBean parent : partBeans) {
+                                if (parent.getId() == o.getPartId()) {
+                                    o.setName(parent.getPartName());
+                                    for (ProductionLineBean.DataBean productionLineBean : productionLineBeans) {
+                                        if (o.getUserProductionLineId() == productionLineBean.getId()) {
+                                            o.setProductionLineName(productionLineBean.getProductionLineId());
+                                        }
+                                    }
+                                }
                             }
                         }
-                        return materialBean.getData();
+                        return partStoreBean.getData();
                     }
                 })
                 // 切换到主线程刷新UI展示数据
                 .observeOn(AndroidSchedulers.mainThread())
                 // 回调
-                .subscribe(new Consumer<List<MaterialBean.DataBean>>() {
+                .subscribe(new Consumer<List<PartStoreBean.DataBean>>() {
                     @Override
-                    public void accept(List<MaterialBean.DataBean> dataBeans) throws Exception {
+                    public void accept(List<PartStoreBean.DataBean> dataBeans) throws Exception {
+                        Log.i(TAG, "哈哈：" + dataBeans.toString());
                         // 将数据复制到集合中
-                        materialBeans = dataBeans;
+                        partStoreBeans = dataBeans;
                         // 刷新数据适配器
                         customerAdapter.notifyDataSetChanged();
                     }
@@ -187,22 +245,37 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 });
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_one:
-
-                break;
-            case R.id.btn_two:
-
-                break;
-            case R.id.btn_three:
-
-                break;
-            case R.id.btn_four:
-
-                break;
-        }
+    /**
+     * 补货
+     *
+     * @param postion 生产线位置
+     */
+    @SuppressLint("CheckResult")
+    private void replenishment(int postion) {
+        remote.getResultMessage_Material(productionLineBeans.get(postion).getId())
+                .compose(this.bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .map(ResultMessage_Material::getMessage)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(String s) throws Exception {
+                        Log.i(TAG, "请求成功：" + s);
+                        if (s.equals("仓库材料不足")) {
+                            s = "仓库材料不足";
+                        } else if (s.equals("该生产线不属于本工厂，无法操作")) {
+                            s = "该车间没有生产线，无法补货";
+                        } else if (s.equals("补充材料成功")) {
+                            getAllPartStore();
+                        }
+                        Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.i(TAG, "出现错误：" + throwable.getMessage());
+                    }
+                });
     }
 
     class CustomerAdapter extends BaseAdapter {
@@ -214,12 +287,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         @Override
         public int getCount() {
-            return materialBeans.size();
+            return partStoreBeans.size();
         }
 
         @Override
-        public MaterialBean.DataBean getItem(int position) {
-            return materialBeans.get(position);
+        public PartStoreBean.DataBean getItem(int position) {
+            return partStoreBeans.get(position);
         }
 
         @Override
@@ -238,23 +311,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
 
             initView(view);
-            // 匹配生产线
-            switch (getItem(position).getProductionLineClass()) {
-                case 1:
-                    productionLine = "轿车生产线";
-                    break;
-                case 2:
-                    productionLine = "MPV生产线";
-                    break;
-                case 3:
-                    productionLine = "SUV生产线";
-                    break;
-            }
 
-            tvId.setText(getItem(position).getSupplyListId() + "");
-            tvName.setText(getItem(position).getMaterialName());
-            tvNumber.setText(getItem(position).getSize() + "");
-            tvRawTeaLine.setText(productionLine);
+            tvId.setText(getItem(position).getPartId() + "");
+            tvName.setText(getItem(position).getName());
+            tvNumber.setText(getItem(position).getNum() + "");
+            tvRawTeaLine.setText(getItem(position).getProductionLineName());
             return view;
         }
 
@@ -265,5 +326,4 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             tvRawTeaLine = (TextView) view.findViewById(R.id.tv_raw_tea_line);
         }
     }
-
 }

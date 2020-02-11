@@ -58,6 +58,10 @@ public class ProductionLineBean {
         public int isAI;
         public String productionLineName = "";
 
+        public DataBean(int position) {
+            this.position = position;
+        }
+
         public int getId() {
             return id;
         }

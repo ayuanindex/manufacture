@@ -294,13 +294,13 @@ public class MainActivity extends BaseActivity {
 
         @SuppressLint("CheckResult")
         private void addMaterialStore(Material.DataBean item) {
-            if (item.getSize() * item.getPrice() > workPrice) {
+            if (item.getPrice() > workPrice) {
                 Toast.makeText(MainActivity.this, "资金不足", Toast.LENGTH_SHORT).show();
                 return;
             }
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("userLineId", productionLineId);
-            hashMap.put("num", item.getSize());
+            hashMap.put("num", 1);
             hashMap.put("supplyListId", item.getSupplyListId());
             remote.addMaterialStore(hashMap)
                     .compose(MainActivity.this.bindToLifecycle())
@@ -308,11 +308,13 @@ public class MainActivity extends BaseActivity {
                     .map(ResultMessage_Store::getMessage)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Consumer<String>() {
+                        @SuppressLint("SetTextI18n")
                         @Override
                         public void accept(String s) throws Exception {
                             Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
                             // 重新查询工厂资金
-                            workPrice = workPrice - (item.getSize() * item.getPrice());
+                            workPrice = workPrice - item.getPrice();
+                            tv_funds.setText("工厂资金:" + workPrice);
                         }
                     }, new Consumer<Throwable>() {
                         @Override
