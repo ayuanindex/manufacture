@@ -1,19 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ModuleRenamingHistory">
-    <module old-name="app" new-name="manufacture.app.app" />
-    <module old-name="basic" new-name="manufacture.basic.basic" />
-    <module old-name="manufacture" new-name="manufacture.manufacture" />
-    <module old-name="topic01" new-name="manufacture.topic1.topic01" />
-    <module old-name="topic02" new-name="manufacture.topic2.topic02" />
-    <module old-name="topic03" new-name="manufacture.topic3.topic03" />
-    <module old-name="topic04" new-name="manufacture.topic4.topic04" />
-    <module old-name="topic05" new-name="manufacture.topic5.topic05" />
-    <module old-name="topic06" new-name="manufacture.topic6.topic06" />
-    <module old-name="topic07" new-name="manufacture.topic7.topic07" />
-    <module old-name="topic08" new-name="manufacture.topic8.topic08" />
-    <module old-name="topic09" new-name="manufacture.topic9.topic09" />
-  </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
@@ -31,6 +17,7 @@
       <module fileurl="file://$PROJECT_DIR$/topic10/topic10.iml" filepath="$PROJECT_DIR$/topic10/topic10.iml" />
       <module fileurl="file://$PROJECT_DIR$/topic11/topic11.iml" filepath="$PROJECT_DIR$/topic11/topic11.iml" />
       <module fileurl="file://$PROJECT_DIR$/topic12/topic12.iml" filepath="$PROJECT_DIR$/topic12/topic12.iml" />
+      <module fileurl="file://$PROJECT_DIR$/topic13/topic13.iml" filepath="$PROJECT_DIR$/topic13/topic13.iml" />
       <module fileurl="file://$PROJECT_DIR$/topic18/topic18.iml" filepath="$PROJECT_DIR$/topic18/topic18.iml" />
       <module fileurl="file://$PROJECT_DIR$/topic19/topic19.iml" filepath="$PROJECT_DIR$/topic19/topic19.iml" />
       <module fileurl="file://$PROJECT_DIR$/topic20/topic20.iml" filepath="$PROJECT_DIR$/topic20/topic20.iml" />

@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="GradleMigrationSettings" migrationVersion="1" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <compositeConfiguration>
           <compositeBuild compositeDefinitionSource="SCRIPT" />
         </compositeConfiguration>
-        <option name="delegatedBuild" value="true" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
@@ -15,19 +13,24 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/basic" />
-            <option value="$PROJECT_DIR$/topic1" />
-            <option value="$PROJECT_DIR$/topic2" />
+            <option value="$PROJECT_DIR$/topic01" />
+            <option value="$PROJECT_DIR$/topic02" />
+            <option value="$PROJECT_DIR$/topic03" />
+            <option value="$PROJECT_DIR$/topic04" />
+            <option value="$PROJECT_DIR$/topic05" />
+            <option value="$PROJECT_DIR$/topic06" />
+            <option value="$PROJECT_DIR$/topic07" />
+            <option value="$PROJECT_DIR$/topic08" />
+            <option value="$PROJECT_DIR$/topic09" />
+            <option value="$PROJECT_DIR$/topic10" />
+            <option value="$PROJECT_DIR$/topic11" />
+            <option value="$PROJECT_DIR$/topic12" />
+            <option value="$PROJECT_DIR$/topic18" />
+            <option value="$PROJECT_DIR$/topic19" />
             <option value="$PROJECT_DIR$/topic20" />
             <option value="$PROJECT_DIR$/topic21" />
             <option value="$PROJECT_DIR$/topic22" />
             <option value="$PROJECT_DIR$/topic23" />
-            <option value="$PROJECT_DIR$/topic3" />
-            <option value="$PROJECT_DIR$/topic4" />
-            <option value="$PROJECT_DIR$/topic5" />
-            <option value="$PROJECT_DIR$/topic6" />
-            <option value="$PROJECT_DIR$/topic7" />
-            <option value="$PROJECT_DIR$/topic8" />
-            <option value="$PROJECT_DIR$/topic9" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
