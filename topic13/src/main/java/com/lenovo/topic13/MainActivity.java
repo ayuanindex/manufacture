@@ -175,6 +175,8 @@ public class MainActivity extends BaseActivity {
                             for (PartBean.DataBean partBean : partBeans) {
                                 if (datum.getPartId() == partBean.getId()) {
                                     if (!find(datum, partBean)) {
+                                        // getIdentifier（）方法是通过文件名称来获得资源的ID
+                                        // toLowerCase（）方法将字母转换成小写
                                         materials.add(new Material(
                                                 getResources().getIdentifier(partBean.getIcon().toLowerCase(), "drawable", "com.lenovo.topic13"),
                                                 partBean.getIcon(),
