@@ -189,7 +189,7 @@ public class MainActivity extends BaseActivity {
                                     // 名称
                                     customerBean.setPlName(allStepBean.getPlStepName().replace(allStepBean.getStep() + "", ""));
                                     // 耐久度
-                                    int progress = allStepBean.getPower() - 15;
+                                    int progress = allStepBean.getPower();
                                     customerBean.setProgress(progress);
                                     // hp
                                     customerBean.setHp("HP:" + progress + "/100");

@@ -41,17 +41,21 @@
         <ListView
             android:id="@+id/lv_left"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/dp_5"
             android:layout_weight="1"
-            android:background="#ffffff" />
+            android:background="#ffffff"
+            android:divider="@null"
+            android:dividerHeight="@dimen/dp_0" />
 
         <ListView
             android:id="@+id/lv_right"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginStart="@dimen/dp_5"
             android:layout_weight="1"
-            android:background="#ffffff" />
+            android:background="#ffffff"
+            android:divider="@null"
+            android:dividerHeight="@dimen/dp_0" />
     </LinearLayout>
 </LinearLayout>
