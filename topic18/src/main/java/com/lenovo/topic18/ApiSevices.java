@@ -31,4 +31,9 @@ public interface ApiSevices {
     @POST("dataInterface/Car/getInfo")
     Observable<CarType> getAllCar();
 
+    //获取车辆信息
+    @POST("dataInterface/CarInfo/getInfo")
+    @FormUrlEncoded
+    Observable<CarInfo> getCarInfo(@Field("id") int id);
+
 }

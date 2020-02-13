@@ -133,8 +133,10 @@ public class MainActivity extends BaseActivity {
                 //根据id删除对应的车辆，卖出操作
                 apiSevices.deleteUserRepairCarStore(dataBean.getId())
                         .map(DeleteUserRepairCarStore::getData)
+                        //获取售出价格
+                        .flatMap(dataBeans1 -> apiSevices.getCarInfo(dataBean.getCarId()).map(CarInfo::getData).map(dataBeans2 -> dataBeans2.get(0).getGold()))
                         //修改金额
-                        .flatMap(dataBeans -> apiSevices.updatePriceUserWorkInfo(workId, workMoney + data.get(dataBean.getCarId()).getGold() * dataBean.getNum()))
+                        .flatMap(gold -> apiSevices.updatePriceUserWorkInfo(workId, workMoney + gold * dataBean.getNum()))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(userWorkInfoUpdatePrice -> {

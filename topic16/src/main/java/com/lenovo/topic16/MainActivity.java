@@ -167,8 +167,8 @@ public class MainActivity extends BaseActivity {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(bean -> {
-                            holder.mTv3.setText(bean.getGold() + "");
-                            dataPrice.put(dataBean.getCarId(), bean.getGold());
+                            holder.mTv3.setText(bean.getRepairGold() + "");
+                            dataPrice.put(dataBean.getCarId(), bean.getRepairGold());
                         })
                 ;
             } else {
@@ -201,13 +201,9 @@ public class MainActivity extends BaseActivity {
                 mBtn = (Button) view.findViewById(R.id.btn);
             }
         }
-
     }
-
     private class MyAdapterAllCar extends BaseAdapter {
-
         private List<CarBean.DataBean> dataBeans;
-
         public MyAdapterAllCar(List<CarBean.DataBean> dataBeans) {
             this.dataBeans = dataBeans;
         }
@@ -248,7 +244,6 @@ public class MainActivity extends BaseActivity {
             holder.mTv3.setText(dataBean.getDesc() + "");
             return convertView;
         }
-
         private class ViewHolder {
             private TextView mTv1;
             private TextView mTv2;
@@ -262,6 +257,4 @@ public class MainActivity extends BaseActivity {
             }
         }
     }
-
-
 }
