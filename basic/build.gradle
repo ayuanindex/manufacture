@@ -61,4 +61,5 @@ dependencies {
 
     //Retrofit动态设置baseUrl
     api 'me.jessyan:retrofit-url-manager:1.4.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
 }

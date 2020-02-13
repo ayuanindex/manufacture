@@ -1,25 +1,31 @@
 package com.lenovo.basic.base.act;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.widget.EditText;
+import android.widget.Toast;
+
 
 import androidx.annotation.LayoutRes;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.fragment.app.Fragment;
 
+import com.lenovo.basic.R;
 import com.lenovo.basic.base.frag.BaseFragment;
-import com.trello.rxlifecycle3.components.RxActivity;
+
+import com.lenovo.basic.utils.Network;
 import com.trello.rxlifecycle3.components.support.RxAppCompatActivity;
 
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
+import me.jessyan.retrofiturlmanager.RetrofitUrlManager;
+
 
 /**
  * 所有Activity的基类
@@ -29,6 +35,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
      * Log标记
      */
     public final String TAG = this.getClass().getSimpleName();
+    private AlertDialog dialog;
 
     @Override
     protected final void onCreate(Bundle savedInstanceState) {
@@ -36,11 +43,42 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         initBeforeSetContentView();
         setContentView(getLayoutIdRes());
         initView();
-        initData();
+        //initData();
+        showSetIpDialog();
         initEvent();
     }
 
+    //设置ip的对话框
+    protected void showSetIpDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(R.layout.dialog_ip);
+        dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
 
+        EditText mEtIp = dialog.findViewById(R.id.et_ip);
+        //点击了取消按钮
+        dialog.findViewById(R.id.btn_cancel).setOnClickListener(v -> dialog.dismiss());
+        //点击了确定按钮
+        dialog.findViewById(R.id.btn_true).setOnClickListener(v -> {
+            String ipStr = mEtIp.getText().toString();
+            //判断ip是否符合规范
+            if (ipStr.matches("^((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}$")) {
+                Network.ip = "http://" + ipStr;
+                RetrofitUrlManager.getInstance().setGlobalDomain(Network.ip + ":8085/");
+                Log.e(TAG, "------------------------ip:" + Network.ip);
+                dialog.dismiss();
+                //进行数据请求
+                initData();
+            } else {
+                Toast.makeText(this, "ip不符合规范", Toast.LENGTH_SHORT).show();
+            }
+        });
+        Window window = dialog.getWindow();
+        if (window != null)
+            window.setBackgroundDrawableResource(android.R.color.transparent);
+    }
 
 
     /**
