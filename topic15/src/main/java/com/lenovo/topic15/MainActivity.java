@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import com.lenovo.basic.base.act.BaseActivity;
 import com.lenovo.basic.utils.Network;
 import com.lenovo.topic15.bean.AllPlStepBean;
+import com.lenovo.topic15.bean.AllStageBean;
 import com.lenovo.topic15.bean.CustomerBean;
 import com.lenovo.topic15.bean.ProductionLineBean;
 import com.lenovo.topic15.bean.ProductionLineResultMessage;
@@ -22,9 +23,7 @@ import com.lenovo.topic15.bean.ProductionLineStepBean;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CyclicBarrier;
 
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
@@ -38,7 +37,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private ImageView iv_step_icon;
     private ApiService remote;
     private ProductionLineBean.DataBean productionLineBean;
-    private List<AllPlStepBean.DataBean> allStepInfoBeans;
+    private List<AllStageBean.DataBean> allStageBeans;
     private ArrayList<CustomerBean> customerBeans;
     private int currentPosition;
 
@@ -89,7 +88,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         currentPosition = 0;
 
         customerBeans = new ArrayList<>();
-        allStepInfoBeans = new ArrayList<>();
+        allStageBeans = new ArrayList<>();
 
         // 获取生产线的信息
         getProductionLineBean();
@@ -134,8 +133,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             createProductionLine();
                         } else {
                             productionLineBean = dataBeans.get(0);
-                            Log.i(TAG, "获取所欧生产环节信息");
-                            getAllStepInfoBean();
+                            Log.i(TAG, "获取所有生产工序信息");
+                            getAllStage();
                         }
                     }
                 }, new Consumer<Throwable>() {
@@ -147,20 +146,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     /**
-     * 获取所有生产环节信息
+     * 获取所有生产工序信息
      */
     @SuppressLint("CheckResult")
-    private void getAllStepInfoBean() {
-        remote.getAllStepInfo()
+    private void getAllStage() {
+        remote.getAllStage()
                 .compose(this.bindToLifecycle())
                 .subscribeOn(Schedulers.io())
-                .map(AllPlStepBean::getData)
+                .map(AllStageBean::getData)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<AllPlStepBean.DataBean>>() {
+                .subscribe(new Consumer<List<AllStageBean.DataBean>>() {
                     @Override
-                    public void accept(List<AllPlStepBean.DataBean> dataBeans) throws Exception {
+                    public void accept(List<AllStageBean.DataBean> dataBeans) throws Exception {
                         Log.i(TAG, "获取数据成功");
-                        allStepInfoBeans = dataBeans;
+                        allStageBeans = dataBeans;
                         Log.i(TAG, "获取当前说生产线的环节数据");
                         getProductionLineStep();
                     }
@@ -183,18 +182,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 .map(new Function<ProductionLineStepBean, List<CustomerBean>>() {
                     @Override
                     public List<CustomerBean> apply(ProductionLineStepBean productionLineStepBean) throws Exception {
-                        for (int i = productionLineStepBean.getData().size() - 1; i >= 0; i--) {
-                            for (AllPlStepBean.DataBean allStepInfoBean : allStepInfoBeans) {
-                                if (allStepInfoBean.getId() == productionLineStepBean.getData().get(i).getId()) {
+                        List<ProductionLineStepBean.DataBean> data = productionLineStepBean.getData();
+                        int step = data.get(data.size() - 1).getNextUserPlStepId() - 1;
+                        for (int i = step; i <= step + 19; i++) {
+                            for (AllStageBean.DataBean allStageBean : allStageBeans) {
+                                if (allStageBean.getPlStepId() == i) {
                                     CustomerBean e = new CustomerBean();
-                                    e.setStepName(allStepInfoBean.getPlStepName());
+                                    e.setStepName(allStageBean.getContent());
                                     customerBeans.add(e);
-                                    break;
                                 }
                             }
                         }
                         for (int i = 0; i < customerBeans.size(); i++) {
-                            if (i >= 10) {
+                            if (i + 1 >= 10) {
                                 customerBeans.get(i).setIcon("line0" + productionLineBean.getProductionLineId() + "_" + (i + 1));
                             } else {
                                 customerBeans.get(i).setIcon("line0" + productionLineBean.getProductionLineId() + "_0" + (i + 1));
@@ -207,6 +207,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 .subscribe(new Consumer<List<CustomerBean>>() {
                     @Override
                     public void accept(List<CustomerBean> customerBeans) throws Exception {
+                        for (CustomerBean customerBean : customerBeans) {
+                            Log.i(TAG, "accept: " + customerBean.toString());
+                        }
                         currentPosition = -1;
                         switchOperation(true);
                     }
@@ -265,7 +268,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             name = customerBeans.get(currentPosition).getStepName();
             icon = customerBeans.get(currentPosition).getIcon();
         }
-        tv_step_name.setText(name);
+        tv_step_name.setText("第" + (currentPosition + 1) + "步" + "-" + name);
         iv_step_icon.setImageResource(getResources().getIdentifier(icon, "drawable", "com.lenovo.topic15"));
         Log.i(TAG, icon);
     }

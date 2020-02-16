@@ -1,6 +1,7 @@
 package com.lenovo.topic15;
 
 import com.lenovo.topic15.bean.AllPlStepBean;
+import com.lenovo.topic15.bean.AllStageBean;
 import com.lenovo.topic15.bean.ProductionLineBean;
 import com.lenovo.topic15.bean.ProductionLineResultMessage;
 import com.lenovo.topic15.bean.ProductionLineStepBean;
@@ -50,4 +51,10 @@ public interface ApiService {
     @POST("dataInterface/UserPlStep/search")
     @FormUrlEncoded
     Observable<ProductionLineStepBean> getProductionLineStep(@Field("userProductionLineId") int userProductionLineId);
+
+    /**
+     * 获取全部生产工序
+     */
+    @POST("dataInterface/Stage/getAll")
+    Observable<AllStageBean> getAllStage();
 }
