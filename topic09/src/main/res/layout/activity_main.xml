@@ -31,9 +31,88 @@
             android:textSize="@dimen/sp_12" />
     </RelativeLayout>
 
-    <ProgressBar
-        android:id="@+id/progressBar2"
-        style="@android:style/Widget.ProgressBar.Horizontal"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:background="#DADAD8"
+        android:orientation="horizontal"
+        android:padding="@dimen/dp_10">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/dp_5"
+                android:text="休息室"
+                android:textSize="@dimen/sp_20"
+                android:textStyle="bold" />
+
+            <!--休息室中人员列表-->
+            <ListView
+                android:id="@+id/lv_rest"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ffffff"
+                android:divider="@null"
+                android:dividerHeight="@dimen/dp_0" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/dp_20"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:background="#ffffff"
+                android:minWidth="@dimen/dp_160"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="当前工厂时间"
+                    android:textSize="@dimen/sp_16" />
+
+                <!--当前工厂时间-->
+                <TextView
+                    android:id="@+id/tv_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="00:00"
+                    android:textSize="@dimen/sp_25"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/dp_5"
+                android:text="工作岗位"
+                android:textSize="@dimen/sp_20"
+                android:textStyle="bold" />
+
+            <!--工作岗位中的人员-->
+            <ListView
+                android:id="@+id/lv_post"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ffffff"
+                android:divider="@null"
+                android:dividerHeight="@dimen/dp_0" />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

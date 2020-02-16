@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <compositeConfiguration>
-          <compositeBuild compositeDefinitionSource="SCRIPT" />
-        </compositeConfiguration>
+        <option name="testRunner" value="PLATFORM" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleJvm" value="1.8" />
@@ -28,6 +27,9 @@
             <option value="$PROJECT_DIR$/topic12" />
             <option value="$PROJECT_DIR$/topic13" />
             <option value="$PROJECT_DIR$/topic14" />
+            <option value="$PROJECT_DIR$/topic15" />
+            <option value="$PROJECT_DIR$/topic16" />
+            <option value="$PROJECT_DIR$/topic17" />
             <option value="$PROJECT_DIR$/topic18" />
             <option value="$PROJECT_DIR$/topic19" />
             <option value="$PROJECT_DIR$/topic20" />
@@ -37,7 +39,6 @@
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
-        <option name="testRunner" value="PLATFORM" />
       </GradleProjectSettings>
     </option>
   </component>
