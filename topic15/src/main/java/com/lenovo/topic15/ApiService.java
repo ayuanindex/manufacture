@@ -1,6 +1,5 @@
 package com.lenovo.topic15;
 
-import com.lenovo.topic15.bean.AllPlStepBean;
 import com.lenovo.topic15.bean.AllStageBean;
 import com.lenovo.topic15.bean.ProductionLineBean;
 import com.lenovo.topic15.bean.ProductionLineResultMessage;
@@ -36,12 +35,6 @@ public interface ApiService {
     @POST("Interface/index/createStudentLine")
     @FormUrlEncoded
     Observable<ProductionLineResultMessage> createProductionLine(@Field("lineId1") int lineId, @Field("pos") int pos);
-
-    /**
-     * 获取所有生产环节信息
-     */
-    @POST("dataInterface/UserPlStepInfo/getAll")
-    Observable<AllPlStepBean> getAllStepInfo();
 
     /**
      * 获取当前生产线的生产环节

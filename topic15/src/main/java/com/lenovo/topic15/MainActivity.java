@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 
 import com.lenovo.basic.base.act.BaseActivity;
 import com.lenovo.basic.utils.Network;
-import com.lenovo.topic15.bean.AllPlStepBean;
 import com.lenovo.topic15.bean.AllStageBean;
 import com.lenovo.topic15.bean.CustomerBean;
 import com.lenovo.topic15.bean.ProductionLineBean;
