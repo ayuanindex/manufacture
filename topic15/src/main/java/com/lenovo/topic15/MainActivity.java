@@ -115,15 +115,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @SuppressLint("CheckResult")
     private void getProductionLineBean() {
         remote.getProductionLineIsPosition(3)
+                // 绑定生命周期
                 .compose(this.bindToLifecycle())
+                // 切换到子线程进行网路请求
                 .subscribeOn(Schedulers.io())
+                // 转换提取数据
                 .map(new Function<ProductionLineBean, List<ProductionLineBean.DataBean>>() {
                     @Override
                     public List<ProductionLineBean.DataBean> apply(ProductionLineBean productionLineBean) throws Exception {
                         return productionLineBean.getData();
                     }
                 })
+                // 切换到主线程运行
                 .observeOn(AndroidSchedulers.mainThread())
+                // 订阅得到回调方法
                 .subscribe(new Consumer<List<ProductionLineBean.DataBean>>() {
                     @Override
                     public void accept(List<ProductionLineBean.DataBean> dataBeans) throws Exception {
