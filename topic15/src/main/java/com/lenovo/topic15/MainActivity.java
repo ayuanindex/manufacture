@@ -250,6 +250,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      *
      * @param b true表示下一步false表示上一步
      */
+    @SuppressLint("SetTextI18n")
     private void switchOperation(boolean b) {
         if (customerBeans.size() == 0) {
             Toast.makeText(this, "正在初始化数据", Toast.LENGTH_SHORT).show();
