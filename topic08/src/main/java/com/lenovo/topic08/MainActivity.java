@@ -249,10 +249,10 @@ public class MainActivity extends BaseActivity {
                             //算出当前员工的岗位(员工类型 = 对应岗位 - 1 - （（生产线类型 - 1） * 4）)需要对照数据帮助表
                             switch ((datum.getWorkPostId() - 1 - ((productionClass - 1) * 4))) {
                                 case 0:
-                                    setValue(ll_caozuo, tv_caozuo_name, tv_caozuo_hp, datum);
+                                    setValue(ll_gongcheng, tv_gongcheng_name, tv_gongcheng_hp, datum);
                                     break;
                                 case 1:
-                                    setValue(ll_gongcheng, tv_gongcheng_name, tv_gongcheng_hp, datum);
+                                    setValue(ll_caozuo, tv_caozuo_name, tv_caozuo_hp, datum);
                                     break;
                                 case 2:
                                     setValue(ll_jishu, tv_jishu_name, tv_jishu_hp, datum);
