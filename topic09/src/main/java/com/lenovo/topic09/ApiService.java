@@ -4,6 +4,7 @@ import com.lenovo.topic09.bean.AllPeopleBean;
 import com.lenovo.topic09.bean.ProductionLineBean;
 import com.lenovo.topic09.bean.ProductionResultMessage;
 import com.lenovo.topic09.bean.UserPeopleBean;
+import com.lenovo.topic09.bean.UserWorkEnvironmentalBean;
 
 import io.reactivex.Observable;
 import retrofit2.http.Field;
@@ -50,4 +51,13 @@ public interface ApiService {
      */
     @POST("dataInterface/People/getAll")
     Observable<AllPeopleBean> getAllPeople();
+
+    /**
+     * 获取当前工厂环境信息
+     *
+     * @param id 工厂ID
+     */
+    @POST("dataInterface/UserWorkEnvironmentalLog/getInfo")
+    @FormUrlEncoded
+    Observable<UserWorkEnvironmentalBean> getUserWorkEnvironmental(@Field("id") int id);
 }
