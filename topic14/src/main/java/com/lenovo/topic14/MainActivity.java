@@ -189,10 +189,14 @@ public class MainActivity extends BaseActivity {
                                     // 名称
                                     customerBean.setPlName(allStepBean.getPlStepName().replace(allStepBean.getStep() + "", ""));
                                     // 耐久度
-                                    int progress = allStepBean.getPower();
+                                    int progress = allStepBean.getPower() - 90;
+                                    // 生产生产损耗
+                                    int consume = allStepBean.getConsume();
                                     customerBean.setProgress(progress);
+                                    customerBean.setConsume(consume + "");
                                     // hp
                                     customerBean.setHp("HP:" + progress + "/100");
+                                    break;
                                 }
                             }
                             customerBeans.add(customerBean);
@@ -282,12 +286,20 @@ public class MainActivity extends BaseActivity {
             }
 
             initView(view);
+            if (getItem(position).getProgress() < Integer.parseInt(getItem(position).getConsume())) {
+                tvLinkName.setTextColor(Color.parseColor("#ff0000"));
+            } else {
+                tvLinkName.setTextColor(Color.parseColor("#4E4E4E"));
+            }
+
             llBackground.setBackgroundColor(Color.parseColor(getItem(position).getBackground()));
             tvLinkName.setText(getItem(position).getPlName());
             tvPower.setText(getItem(position).getHp());
             // 设置控件的宽度
+            ViewGroup.LayoutParams rlProgressBarLayoutParams = rlProgressBar.getLayoutParams();
+            int i = rlProgressBarLayoutParams.width / 100;
             ViewGroup.LayoutParams layoutParams = tvSchedule.getLayoutParams();
-            layoutParams.width = (int) getItem(position).getProgress();
+            layoutParams.width = (int) getItem(position).getProgress() * i;
             tvSchedule.setLayoutParams(layoutParams);
             return view;
         }

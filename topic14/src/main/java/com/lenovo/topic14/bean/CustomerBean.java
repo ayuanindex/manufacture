@@ -11,6 +11,7 @@ public class CustomerBean {
     private String plName;
     private String hp;
     private double progress;
+    private String consume;
 
     public String getBackground() {
         return background;
@@ -44,6 +45,14 @@ public class CustomerBean {
         this.progress = progress;
     }
 
+    public String getConsume() {
+        return consume;
+    }
+
+    public void setConsume(String consume) {
+        this.consume = consume;
+    }
+
     @Override
     public String toString() {
         return "CustomerBean{" +
@@ -51,6 +60,7 @@ public class CustomerBean {
                 ", plName='" + plName + '\'' +
                 ", hp='" + hp + '\'' +
                 ", progress=" + progress +
+                ", consume='" + consume + '\'' +
                 '}';
     }
 }
