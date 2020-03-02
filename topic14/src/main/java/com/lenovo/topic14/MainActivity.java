@@ -97,7 +97,7 @@ public class MainActivity extends BaseActivity {
      */
     @SuppressLint("CheckResult")
     private void getProductionLine() {
-        remote.getProductionLine(3)
+        remote.getProductionLine(0)
                 // 绑定生命周期
                 .compose(this.bindToLifecycle())
                 // 切换到子线程进行网络请求
@@ -189,7 +189,7 @@ public class MainActivity extends BaseActivity {
                                     // 名称
                                     customerBean.setPlName(allStepBean.getPlStepName().replace(allStepBean.getStep() + "", ""));
                                     // 耐久度
-                                    int progress = allStepBean.getPower() - 90;
+                                    int progress = allStepBean.getPower();
                                     // 生产生产损耗
                                     int consume = allStepBean.getConsume();
                                     customerBean.setProgress(progress);
@@ -231,7 +231,7 @@ public class MainActivity extends BaseActivity {
      */
     @SuppressLint("CheckResult")
     private void createProductionLine() {
-        remote.createProductionLine(3, 3)
+        remote.createProductionLine(3, 0)
                 .compose(this.bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .map(ProductionResultMessage::getMessage)
