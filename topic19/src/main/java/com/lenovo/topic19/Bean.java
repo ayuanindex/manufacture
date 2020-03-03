@@ -2,8 +2,9 @@ package com.lenovo.topic19;
 
 import java.util.List;
 
+//出入库采用的是同一个Bean进行解析的，解析的是Bean有的属性，
+// 所以可以通用一个Bean解析
 public class Bean {
-
     private int status;
     private String message;
     private List<DataBean> data;
@@ -33,18 +34,42 @@ public class Bean {
     }
 
     public static class DataBean {
+        /**
+         * id : 140
+         * userFactoryId : 1
+         * userLineId : 2513
+         * supplyListId : 5
+         * num : 2
+         * time : 1582782181
+         * price : 2700
+         * lastUpdateTime : null
+         * supplyName : 新星汽车配件
+         * materialName : 轿车座椅
+         * lineName : null
+         */
 
         private int id;
         private int userFactoryId;
+        private int userLineId;
         private int supplyListId;
         private int num;
-        private long time;
+        private int time;
         private int price;
-        private long lastUpdateTime;
+        private String lastUpdateTime;
         private String supplyName;
         private String materialName;
-        private String type;//出入库方向
+        private String type;//确定出入库方向
         private String timeStr;
+        private String lineName;
+
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
 
         public String getTimeStr() {
             return timeStr;
@@ -54,13 +79,6 @@ public class Bean {
             this.timeStr = timeStr;
         }
 
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
 
         public int getId() {
             return id;
@@ -76,6 +94,14 @@ public class Bean {
 
         public void setUserFactoryId(int userFactoryId) {
             this.userFactoryId = userFactoryId;
+        }
+
+        public int getUserLineId() {
+            return userLineId;
+        }
+
+        public void setUserLineId(int userLineId) {
+            this.userLineId = userLineId;
         }
 
         public int getSupplyListId() {
@@ -94,11 +120,11 @@ public class Bean {
             this.num = num;
         }
 
-        public long getTime() {
+        public int getTime() {
             return time;
         }
 
-        public void setTime(long time) {
+        public void setTime(int time) {
             this.time = time;
         }
 
@@ -110,11 +136,11 @@ public class Bean {
             this.price = price;
         }
 
-        public long getLastUpdateTime() {
+        public String getLastUpdateTime() {
             return lastUpdateTime;
         }
 
-        public void setLastUpdateTime(long lastUpdateTime) {
+        public void setLastUpdateTime(String lastUpdateTime) {
             this.lastUpdateTime = lastUpdateTime;
         }
 
@@ -132,6 +158,14 @@ public class Bean {
 
         public void setMaterialName(String materialName) {
             this.materialName = materialName;
+        }
+
+        public String getLineName() {
+            return lineName;
+        }
+
+        public void setLineName(String lineName) {
+            this.lineName = lineName;
         }
     }
 }

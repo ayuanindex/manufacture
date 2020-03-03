@@ -86,7 +86,7 @@ public class MainActivity extends BaseActivity {
                     //过滤非当前时间数据
                     List<Bean.DataBean> data = new ArrayList<>();
                     for (int i = 0; i < dataBeans.size(); i++) {
-                        long tempTime = Long.valueOf(dataBeans.get(i).getLastUpdateTime() + "000");
+                        long tempTime = Long.valueOf(dataBeans.get(i).getTime() + "000");
                         if (tempTime >= finalStartTime && tempTime < finalEndTiem + dayOfTimeMillin) {
                             Bean.DataBean dataBean = dataBeans.get(i);
                             //添加数据，即格式化好的时间字符串
@@ -181,7 +181,7 @@ public class MainActivity extends BaseActivity {
             holder.mTv1.setText(dataBean.getMaterialName());
             holder.mTv2.setText(dataBean.getType());
             holder.mTv3.setText(dataBean.getTimeStr());
-            holder.mTv4.setText(dataBean.getType());
+            holder.mTv4.setText(dataBean.getLineName());
             holder.mTv5.setText(dataBean.getNum() + "");
             return convertView;
         }
