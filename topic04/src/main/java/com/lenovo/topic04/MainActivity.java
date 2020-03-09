@@ -245,7 +245,6 @@ public class MainActivity extends BaseActivity {
                                         // 将电力供应和电力消耗添加到集合中
                                         consumptionList.add(Float.parseFloat(powerConsume));//电力消耗
                                         supplyList.add(power);// 电力供应
-
                                         tv_consumption.setText(powerConsume + "");
                                         tv_supply.setText(power + "");
 
