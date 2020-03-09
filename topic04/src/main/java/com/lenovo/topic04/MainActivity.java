@@ -237,16 +237,17 @@ public class MainActivity extends BaseActivity {
                                             supplyList.remove(0);
                                             consumptionList.remove(0);
                                         }
-                                        // 电力供应
-                                        String supply = dataBeanList.getPower();
-                                        // 电力消耗 = 电力供应 / 1.1
-                                        float consumption = (float) (Float.parseFloat(supply) / 1.1);
-                                        // 将电力供应和电力消耗添加到集合中
-                                        consumptionList.add(consumption);
-                                        supplyList.add(Float.parseFloat(supply));
 
-                                        tv_consumption.setText(consumption + "");
-                                        tv_supply.setText(supply + "");
+                                        // 电力消耗
+                                        String powerConsume = dataBeanList.getPowerConsume();
+                                        //电力供应
+                                        float power = Float.parseFloat(powerConsume) * 1.1f;
+                                        // 将电力供应和电力消耗添加到集合中
+                                        consumptionList.add(Float.parseFloat(powerConsume));//电力消耗
+                                        supplyList.add(power);// 电力供应
+
+                                        tv_consumption.setText(powerConsume + "");
+                                        tv_supply.setText(power + "");
 
                                         // 刷新图表
                                         refreshBarChart();
