@@ -117,6 +117,7 @@ public class MainActivity extends BaseActivity {
         Disposable subscribe = remote.setFactoryEnvironment(1, currentProgress)
                 // 切换到子线程进行网络请求
                 .subscribeOn(Schedulers.io())
+                .compose(this.bindToLifecycle())
                 // 切换到主线程对整理好的数据进行展示
                 .observeOn(AndroidSchedulers.mainThread())
                 // 订阅网络请求的状体
@@ -164,6 +165,7 @@ public class MainActivity extends BaseActivity {
                         }
                         subscribe = remote.getFactoryEnvironment(1)
                                 // 切换到子线程有运行
+                                .compose(MainActivity.this.bindToLifecycle())
                                 .subscribeOn(Schedulers.io())
                                 // 对获取到的数据进行变换，拿到自己想要的数据在接下来的方法中呢继续使用
                                 .map(new Function<FactoryEnvironment, FactoryEnvironment.DataBeanList>() {
@@ -208,11 +210,5 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        for (Disposable disposable : disposables) {
-            if (disposable != null && !disposable.isDisposed()) {
-                disposable.dispose();
-                Log.i(TAG, "哈哈");
-            }
-        }
     }
 }

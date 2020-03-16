@@ -109,6 +109,7 @@ public class MainActivity extends BaseActivity {
                 // 切换到子线程进行网络请求
                 .subscribeOn(Schedulers.io())
                 // 将需要的数据集合提取出来
+                .compose(this.bindToLifecycle())
                 .map(new Function<AllProductionLineBean, List<AllProductionLineBean.LineBean>>() {
                     @Override
                     public List<AllProductionLineBean.LineBean> apply(AllProductionLineBean allProductionLineBean) throws Exception {
@@ -149,6 +150,7 @@ public class MainActivity extends BaseActivity {
         Log.i(TAG, "createProductionLine: " + lineClass + "位置：" + position);
         Disposable subscribe = remote.getResult(lineClass, position)
                 .subscribeOn(Schedulers.io())
+                .compose(this.bindToLifecycle())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<ResultMessageBean>() {
                     @Override

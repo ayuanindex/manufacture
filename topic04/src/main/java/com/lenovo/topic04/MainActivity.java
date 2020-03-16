@@ -216,6 +216,7 @@ public class MainActivity extends BaseActivity {
                         unsubscribe(subscribe);
                         subscribe = remote.getFactoryEnvironment(1)
                                 // 切换到子线程进行网络请求
+                                .compose(MainActivity.this.bindToLifecycle())
                                 .subscribeOn(Schedulers.io())
                                 // 对数据进行转换
                                 .map(new Function<FactoryEnvironment, FactoryEnvironment.DataBeanList>() {

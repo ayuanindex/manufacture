@@ -80,6 +80,7 @@ public class MainActivity extends BaseActivity {
         }
         // 调用指定的接口（接口已经包含了api地址以及所需要的参数类型
         subscribe = remote.getUpdateLightSwitch(1, lightSwitch)
+                .compose(this.bindToLifecycle())
                 // 切换到子线程
                 .subscribeOn(Schedulers.io())
                 // 切换到主线程

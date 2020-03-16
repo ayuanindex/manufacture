@@ -119,6 +119,7 @@ public class MainActivity extends BaseActivity {
      */
     private void acControl() {
         Disposable subscribe = remote.getFactoryEnvironment(1, acOnOff)
+                .compose(this.bindToLifecycle())
                 // 切换到子线程进行网络请求
                 .subscribeOn(Schedulers.io())
                 // 切换到主线程对结果进行处理
@@ -166,6 +167,7 @@ public class MainActivity extends BaseActivity {
                             subscribe.dispose();
                         }
                         subscribe = remote.getFactoryEnvironment(1)
+                                .compose(MainActivity.this.bindToLifecycle())
                                 // 切换到子线程进行网络请求
                                 .subscribeOn(Schedulers.io())
                                 // 对请求成功的数据进行变换
@@ -236,12 +238,12 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // 取消订阅获取工厂环境的请求
+        /*// 取消订阅获取工厂环境的请求
         for (Disposable disposable : disposables) {
             if (disposable != null && !disposable.isDisposed()) {
                 disposable.dispose();
                 Log.i(TAG, "onDestroy: 哈哈");
             }
-        }
+        }*/
     }
 }
