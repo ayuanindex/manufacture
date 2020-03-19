@@ -57,7 +57,7 @@ public interface ApiService {
      *
      * @param id 工厂ID
      */
-    @POST("dataInterface/UserWorkEnvironmentalLog/getInfo")
+    @POST("dataInterface/UserWorkEnvironmental/getInfo")
     @FormUrlEncoded
     Observable<UserWorkEnvironmentalBean> getUserWorkEnvironmental(@Field("id") int id);
 }
