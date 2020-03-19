@@ -2,6 +2,7 @@ package com.lenovo.topic08;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -247,6 +248,9 @@ public class MainActivity extends BaseActivity {
                         for (LineToPeople.DataBean datum : allStudentBean.getData()) {
                             //0、工程师，1、工人，2、技术人员，3、检测人员)
                             //算出当前员工的岗位(员工类型 = 对应岗位 - 1 - （（生产线类型 - 1） * 4）)需要对照数据帮助表
+                            if (TextUtils.isEmpty(datum.getWorkPostId() + "")) {
+                                continue;
+                            }
                             switch ((datum.getWorkPostId() - 1 - ((productionClass - 1) * 4))) {
                                 case 0:
                                     setValue(ll_gongcheng, tv_gongcheng_name, tv_gongcheng_hp, datum);
