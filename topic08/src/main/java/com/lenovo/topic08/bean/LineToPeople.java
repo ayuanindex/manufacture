@@ -53,7 +53,7 @@ public class LineToPeople {
         public int power;
         public int peopleId;
         public int userProductionLineId;
-        public int workPostId;
+        public String workPostId;
 
         public int getId() {
             return id;
@@ -95,11 +95,11 @@ public class LineToPeople {
             this.userProductionLineId = userProductionLineId;
         }
 
-        public int getWorkPostId() {
+        public String getWorkPostId() {
             return workPostId;
         }
 
-        public void setWorkPostId(int workPostId) {
+        public void setWorkPostId(String workPostId) {
             this.workPostId = workPostId;
         }
 
